@@ -2,7 +2,7 @@ import React from "react";
 
 import * as $3Dmol from "3dmol";
 
-import "./Mol3DVisualizer.css";
+import "./Visualizer3dmol.css";
 
 async function loadStructure() {
   const response = await fetch("./mc3d-18552.cif", { method: "get" });
@@ -21,14 +21,14 @@ async function loadStructure() {
   viewer.render();
 }
 
-class Mol3DVisualizer extends React.Component {
+class Visualizer3dmol extends React.Component {
   componentDidMount() {
     loadStructure();
   }
 
   render() {
-    return <div id="gldiv">Mol3DVisualizer</div>;
+    return <div id="gldiv">Visualizer3dmol</div>;
   }
 }
 
-export default Mol3DVisualizer;
+export default Visualizer3dmol;

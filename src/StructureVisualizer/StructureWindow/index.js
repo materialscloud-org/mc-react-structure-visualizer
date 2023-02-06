@@ -2,7 +2,7 @@ import React from "react";
 
 import "./index.css";
 
-import Mol3DVisualizer from "./Mol3DVisualizer";
+import Visualizer3dmol from "./3dmol/Visualizer3dmol";
 
 class StructureWindow extends React.Component {
   constructor(props) {
@@ -16,7 +16,7 @@ class StructureWindow extends React.Component {
   render() {
     return (
       <div className="structure-window">
-        <Mol3DVisualizer />
+        <Visualizer3dmol />
       </div>
     );
   }
