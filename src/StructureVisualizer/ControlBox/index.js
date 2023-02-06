@@ -9,14 +9,12 @@ class ControlBox extends React.Component {
       viewerParams: {
         supercell: [2, 2, 2],
         orientation: "x",
-        bonds: false,
+        bonds: true,
         atomLabels: false,
-        packedCell: false,
+        packedCell: true,
         spaceFilling: false,
       },
     };
-
-    this.handleSupercellChange = this.handleSupercellChange.bind(this);
   }
 
   handleSupercellChange = (index, value) => {

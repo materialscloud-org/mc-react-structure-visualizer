@@ -2,6 +2,8 @@ import React from "react";
 
 import "./index.css";
 
+import Mol3DVisualizer from "./Mol3DVisualizer";
+
 class StructureWindow extends React.Component {
   constructor(props) {
     super(props);
@@ -12,7 +14,11 @@ class StructureWindow extends React.Component {
   }
 
   render() {
-    return <div className="structure-window">Structure window</div>;
+    return (
+      <div className="structure-window">
+        <Mol3DVisualizer />
+      </div>
+    );
   }
 }
 

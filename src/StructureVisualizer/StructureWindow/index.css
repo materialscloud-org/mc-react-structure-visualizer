@@ -1,7 +1,7 @@
 .structure-window {
   height: 350px;
   width: 450px;
-  background: rgb(203, 203, 255);
+  background: #f5fffa;
   text-align: center;
   border: 1px solid #999;
   display: flex;
