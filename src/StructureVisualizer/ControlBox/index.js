@@ -47,7 +47,7 @@ class ControlBox extends React.Component {
     console.log(this.state.viewerParams);
     return (
       <div className="control-box">
-        <div>
+        <div className="control-box-row">
           <label>Supercell: </label>
           {[0, 1, 2].map((index) => (
             <input
@@ -61,7 +61,7 @@ class ControlBox extends React.Component {
             />
           ))}
         </div>
-        <div>
+        <div className="control-box-row">
           <label>Camera: </label>
 
           <select
@@ -73,7 +73,7 @@ class ControlBox extends React.Component {
             <option value="z">z</option>
           </select>
         </div>
-        <div>
+        <div className="control-box-row">
           <label>
             <input
               type="checkbox"

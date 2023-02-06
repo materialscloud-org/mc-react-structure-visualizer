@@ -12,6 +12,10 @@
   border-radius: 10px;
 }
 
+.control-box-row {
+  margin: 2px 5px;
+}
+
 .supercell-input {
   width: 40px;
 }
