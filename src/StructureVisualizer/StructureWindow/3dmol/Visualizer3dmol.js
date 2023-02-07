@@ -46,6 +46,7 @@ class Visualizer3dmol extends React.Component {
     this.viewer.addUnitCell(this.model);
     let sc = this.props.viewerParams.supercell;
     this.viewer.replicateUnitCell(sc[0], sc[1], sc[2], this.model);
+    this.model.assignBonds();
     this.viewer.zoomTo();
     this.viewer.render();
   }
