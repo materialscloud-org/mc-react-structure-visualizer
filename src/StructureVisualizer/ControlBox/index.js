@@ -5,46 +5,23 @@ import "./index.css";
 class ControlBox extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      viewerParams: {
-        supercell: [2, 2, 2],
-        orientation: "x",
-        bonds: true,
-        atomLabels: false,
-        packedCell: true,
-        spaceFilling: false,
-      },
-    };
   }
 
   handleSupercellChange = (index, value) => {
-    let newSupercell = this.state.viewerParams.supercell;
+    let newSupercell = this.props.viewerParams.supercell;
     newSupercell[index] = parseInt(value);
-    this.setState({
-      viewerParams: {
-        ...this.state.viewerParams,
-        supercell: newSupercell,
-      },
-    });
+    this.props.onViewerParamChange("supercell", newSupercell);
   };
 
   handleOrientationChange = (e) => {
-    this.setState({
-      viewerParams: { ...this.state.viewerParams, orientation: e.target.value },
-    });
+    this.props.onViewerParamChange("orientation", e.target.value);
   };
 
   handleOptionChange = (option) => {
-    this.setState({
-      viewerParams: {
-        ...this.state.viewerParams,
-        [option]: !this.state.viewerParams[option],
-      },
-    });
+    this.props.onViewerParamChange(option, !this.props.viewerParams[option]);
   };
 
   render() {
-    console.log(this.state.viewerParams);
     return (
       <div className="control-box">
         <div className="control-box-row">
@@ -54,7 +31,7 @@ class ControlBox extends React.Component {
               key={index}
               className="supercell-input"
               type="number"
-              value={this.state.viewerParams.supercell[index]}
+              value={this.props.viewerParams.supercell[index]}
               onChange={(e) =>
                 this.handleSupercellChange(index, e.target.value)
               }
@@ -66,7 +43,7 @@ class ControlBox extends React.Component {
 
           <select
             onChange={this.handleOrientationChange}
-            value={this.state.viewerParams.orientation}
+            value={this.props.viewerParams.orientation}
           >
             <option value="x">x</option>
             <option value="y">y</option>
@@ -77,7 +54,7 @@ class ControlBox extends React.Component {
           <label>
             <input
               type="checkbox"
-              checked={this.state.viewerParams.bonds}
+              checked={this.props.viewerParams.bonds}
               onChange={() => this.handleOptionChange("bonds")}
             />
             Bonds
@@ -85,26 +62,28 @@ class ControlBox extends React.Component {
           <label>
             <input
               type="checkbox"
-              checked={this.state.viewerParams.atomLabels}
+              checked={this.props.viewerParams.atomLabels}
               onChange={() => this.handleOptionChange("atomLabels")}
+              disabled={true}
             />
             Atom Labels
           </label>
           <label>
             <input
               type="checkbox"
-              checked={this.state.viewerParams.packedCell}
+              checked={this.props.viewerParams.packedCell}
               onChange={() => this.handleOptionChange("packedCell")}
+              disabled={true}
             />
             Packed Cell
           </label>
           <label>
             <input
               type="checkbox"
-              checked={this.state.viewerParams.spaceFilling}
-              onChange={() => this.handleOptionChange("spaceFilling")}
+              checked={this.props.viewerParams.spaceFilling}
+              onChange={() => this.handleOptionChange("vdwRadius")}
             />
-            Space-filling
+            vdW radius
           </label>
         </div>
       </div>

@@ -9,14 +9,10 @@ class StructureWindow extends React.Component {
     super(props);
   }
 
-  updateVisualizationOptions(newOptions) {
-    console.log(newOptions);
-  }
-
   render() {
     return (
       <div className="structure-window">
-        <Visualizer3dmol />
+        <Visualizer3dmol viewerParams={this.props.viewerParams} />
       </div>
     );
   }
