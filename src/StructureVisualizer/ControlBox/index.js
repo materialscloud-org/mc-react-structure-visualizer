@@ -13,12 +13,12 @@ class ControlBox extends React.Component {
     this.props.onViewerParamChange("supercell", newSupercell);
   };
 
-  handleOrientationChange = (e) => {
-    this.props.onViewerParamChange("orientation", e.target.value);
-  };
-
   handleOptionChange = (option) => {
     this.props.onViewerParamChange(option, !this.props.viewerParams[option]);
+  };
+
+  handleCameraEvent = (orientation) => {
+    this.props.onViewerEvent("camera", orientation);
   };
 
   render() {
@@ -40,15 +40,9 @@ class ControlBox extends React.Component {
         </div>
         <div className="control-box-row">
           <label>Camera: </label>
-
-          <select
-            onChange={this.handleOrientationChange}
-            value={this.props.viewerParams.orientation}
-          >
-            <option value="x">x</option>
-            <option value="y">y</option>
-            <option value="z">z</option>
-          </select>
+          <button onClick={() => this.handleCameraEvent("x")}>x</button>
+          <button onClick={() => this.handleCameraEvent("y")}>y</button>
+          <button onClick={() => this.handleCameraEvent("z")}>z</button>
         </div>
         <div className="control-box-row">
           <label>

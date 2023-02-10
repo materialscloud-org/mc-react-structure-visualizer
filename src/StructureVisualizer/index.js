@@ -1,7 +1,10 @@
 import React from "react";
 
-import StructureWindow from "./StructureWindow";
 import ControlBox from "./ControlBox";
+
+import Visualizer3dmol from "./3dmol/Visualizer3dmol";
+
+import "./index.css";
 
 class StructureVisualizer extends React.Component {
   constructor(props) {
@@ -18,7 +21,11 @@ class StructureVisualizer extends React.Component {
       },
     };
 
+    // use Ref to send events to the visualizer backend
+    this.visualizerRef = React.createRef();
+
     this.handleViewerParamChange = this.handleViewerParamChange.bind(this);
+    this.handleViewerEvent = this.handleViewerEvent.bind(this);
   }
 
   handleViewerParamChange(param, value) {
@@ -30,13 +37,23 @@ class StructureVisualizer extends React.Component {
     });
   }
 
+  handleViewerEvent(param, value) {
+    this.visualizerRef.current.handleEvent(param, value);
+  }
+
   render() {
     return (
       <div className="structure-visualizer">
-        <StructureWindow viewerParams={this.state.viewerParams} />
+        <div className="structure-window">
+          <Visualizer3dmol
+            ref={this.visualizerRef}
+            viewerParams={this.state.viewerParams}
+          />
+        </div>
         <ControlBox
           viewerParams={this.state.viewerParams}
           onViewerParamChange={this.handleViewerParamChange}
+          onViewerEvent={this.handleViewerEvent}
         />
       </div>
     );

@@ -47,8 +47,29 @@ class Visualizer3dmol extends React.Component {
     let sc = this.props.viewerParams.supercell;
     this.viewer.replicateUnitCell(sc[0], sc[1], sc[2], this.model);
     this.model.assignBonds();
+
+    console.log(this.viewer.getView());
+
+    this.viewer.setView([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]);
+
     this.viewer.zoomTo();
     this.viewer.render();
+  }
+
+  handleEvent(type, value) {
+    if (type == "camera") {
+      // console.log(this.viewer.getView());
+      if (value == "x") {
+        this.viewer.setView([0.0, 0.0, 0.0, 0.0, -0.5, -0.5, -0.5, 0.5]);
+      }
+      if (value == "y") {
+        this.viewer.setView([0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5, 0.5]);
+      }
+      if (value == "z") {
+        this.viewer.setView([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]);
+      }
+      this.viewer.zoomTo();
+    }
   }
 
   render() {
