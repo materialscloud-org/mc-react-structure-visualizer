@@ -10,26 +10,22 @@ class Visualizer3dmol extends React.Component {
 
     this.viewer = null;
     this.model = null;
-    this.cifText = null;
+
+    // Assign random id to prevent multiple 'gldiv' from clashing
+    this.divId = "gldiv-" + (Math.random() + 1).toString(36).substring(7);
   }
 
   componentDidMount() {
     // set up the viewer instance
     let config = { backgroundColor: "mintcream", orthographic: true };
-    this.viewer = $3Dmol.createViewer("gldiv", config);
+    this.viewer = $3Dmol.createViewer(this.divId, config);
 
-    this.loadStructure();
-  }
-
-  async loadStructure() {
-    const response = await fetch("./mc3d-18552.cif", { method: "get" });
-    this.cifText = await response.text();
     this.updateView();
   }
 
   updateView() {
     this.viewer.removeAllModels();
-    this.model = this.viewer.addModel(this.cifText, "cif");
+    this.model = this.viewer.addModel(this.props.cifText, "cif");
 
     let style = {
       sphere: { scale: 0.3, colorscheme: "Jmol" },
@@ -48,9 +44,8 @@ class Visualizer3dmol extends React.Component {
     this.viewer.replicateUnitCell(sc[0], sc[1], sc[2], this.model);
     this.model.assignBonds();
 
-    console.log(this.viewer.getView());
-
-    this.viewer.setView([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]);
+    // console.log(this.viewer.getView());
+    // this.viewer.setView([0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5, 0.5]);
 
     this.viewer.zoomTo();
     this.viewer.render();
@@ -76,7 +71,11 @@ class Visualizer3dmol extends React.Component {
     if (this.viewer && this.model) {
       this.updateView();
     }
-    return <div id="gldiv">Visualizer3dmol</div>;
+    return (
+      <div id={this.divId} className="gldiv">
+        No data!
+      </div>
+    );
   }
 }
 

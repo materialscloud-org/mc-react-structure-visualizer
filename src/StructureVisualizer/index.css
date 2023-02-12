@@ -1,4 +1,6 @@
 .structure-window {
+  position: relative;
+  z-index: 2;
   height: 350px;
   width: 448px;
   background: #f5fffa;

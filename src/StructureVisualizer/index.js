@@ -42,12 +42,14 @@ class StructureVisualizer extends React.Component {
   }
 
   render() {
+    // console.log("CIF", this.props.cifText);
     return (
       <div className="structure-visualizer">
         <div className="structure-window">
           <Visualizer3dmol
             ref={this.visualizerRef}
             viewerParams={this.state.viewerParams}
+            cifText={this.props.cifText}
           />
         </div>
         <ControlBox
