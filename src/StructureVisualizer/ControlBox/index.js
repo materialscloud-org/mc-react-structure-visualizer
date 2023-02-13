@@ -37,16 +37,17 @@ class ControlBox extends React.Component {
               }
             />
           ))}
-        </div>
-        <div className="control-box-row">
-          <label>Camera: </label>
-          <button onClick={() => this.handleCameraEvent("x")}>x</button>
-          <button onClick={() => this.handleCameraEvent("y")}>y</button>
-          <button onClick={() => this.handleCameraEvent("z")}>z</button>
+          <div className="camera-controls">
+            <label>Camera: </label>
+            <button onClick={() => this.handleCameraEvent("x")}>x</button>
+            <button onClick={() => this.handleCameraEvent("y")}>y</button>
+            <button onClick={() => this.handleCameraEvent("z")}>z</button>
+          </div>
         </div>
         <div className="control-box-row">
           <label>
             <input
+              className="option-checkbox"
               type="checkbox"
               checked={this.props.viewerParams.bonds}
               onChange={() => this.handleOptionChange("bonds")}
@@ -55,6 +56,7 @@ class ControlBox extends React.Component {
           </label>
           <label>
             <input
+              className="option-checkbox"
               type="checkbox"
               checked={this.props.viewerParams.atomLabels}
               onChange={() => this.handleOptionChange("atomLabels")}
@@ -64,6 +66,7 @@ class ControlBox extends React.Component {
           </label>
           <label>
             <input
+              className="option-checkbox"
               type="checkbox"
               checked={this.props.viewerParams.packedCell}
               onChange={() => this.handleOptionChange("packedCell")}
@@ -73,6 +76,7 @@ class ControlBox extends React.Component {
           </label>
           <label>
             <input
+              className="option-checkbox"
               type="checkbox"
               checked={this.props.viewerParams.spaceFilling}
               onChange={() => this.handleOptionChange("vdwRadius")}

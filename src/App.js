@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
 
+// Note: Bootstrap is not really used.
+// Just the default css is loaded to test how the component works with bootstrap.
+import "bootstrap/dist/css/bootstrap.min.css";
+
 import "./App.css";
 import StructureVisualizer from "./StructureVisualizer";
 
