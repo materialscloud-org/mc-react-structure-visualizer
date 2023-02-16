@@ -16,8 +16,14 @@
 }
 
 .supercell-input {
-  width: 40px;
+  width: 45px;
   height: 25px;
+}
+
+/* Always show the small arrows (needed for Chrome) */
+.supercell-input::-webkit-inner-spin-button,
+.supercell-input::-webkit-outer-spin-button {
+  opacity: 1;
 }
 
 .control-box-row {
