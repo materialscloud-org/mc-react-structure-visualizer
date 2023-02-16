@@ -17,8 +17,6 @@ async function fetchCif() {
   );
   const jsonAiiDACif = await responseAiiDACif.json();
 
-  console.log(jsonAiiDACif);
-
   return jsonAiiDACif.data.download.data;
 }
 

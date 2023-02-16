@@ -2,7 +2,7 @@ import React from "react";
 
 import ControlBox from "./ControlBox";
 
-import Visualizer3dmol from "./3dmol/Visualizer3dmol";
+import StructureWindow from "./StructureWindow";
 
 import "./index.css";
 
@@ -13,19 +13,42 @@ class StructureVisualizer extends React.Component {
     this.state = {
       viewerParams: {
         supercell: [2, 2, 2],
-        orientation: "x",
         bonds: true,
         atomLabels: false,
         packedCell: false,
         vdwRadius: false,
       },
+      mouseEnabled: false,
     };
 
     // use Ref to send events to the visualizer backend
     this.visualizerRef = React.createRef();
 
+    // Ref to detect click outside
+    this.wrapperRef = React.createRef();
+    this.handleClickOutside = this.handleClickOutside.bind(this);
+
     this.handleViewerParamChange = this.handleViewerParamChange.bind(this);
     this.handleViewerEvent = this.handleViewerEvent.bind(this);
+    this.setMouseEnabled = this.setMouseEnabled.bind(this);
+  }
+
+  componentDidMount() {
+    document.addEventListener("mousedown", this.handleClickOutside);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener("mousedown", this.handleClickOutside);
+  }
+
+  handleClickOutside(event) {
+    if (this.wrapperRef && !this.wrapperRef.current.contains(event.target)) {
+      this.setState({ mouseEnabled: false });
+    }
+  }
+
+  setMouseEnabled() {
+    this.setState({ mouseEnabled: true });
   }
 
   handleViewerParamChange(param, value) {
@@ -42,16 +65,15 @@ class StructureVisualizer extends React.Component {
   }
 
   render() {
-    // console.log("CIF", this.props.cifText);
     return (
-      <div className="structure-visualizer">
-        <div className="structure-window">
-          <Visualizer3dmol
-            ref={this.visualizerRef}
-            viewerParams={this.state.viewerParams}
-            cifText={this.props.cifText}
-          />
-        </div>
+      <div ref={this.wrapperRef} className="structure-visualizer">
+        <StructureWindow
+          visualizerRef={this.visualizerRef}
+          viewerParams={this.state.viewerParams}
+          cifText={this.props.cifText}
+          mouseEnabled={this.state.mouseEnabled}
+          setMouseEnabled={this.setMouseEnabled}
+        />
         <ControlBox
           viewerParams={this.state.viewerParams}
           onViewerParamChange={this.handleViewerParamChange}

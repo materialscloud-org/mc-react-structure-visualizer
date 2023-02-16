@@ -23,6 +23,15 @@ class Visualizer3dmol extends React.Component {
     this.updateView();
   }
 
+  componentDidUpdate(prevProps) {
+    if (
+      prevProps.viewerParams != this.props.viewerParams ||
+      prevProps.cifText != this.props.cifText
+    ) {
+      this.updateView();
+    }
+  }
+
   updateView() {
     this.viewer.removeAllModels();
     this.model = this.viewer.addModel(this.props.cifText, "cif");
@@ -43,9 +52,6 @@ class Visualizer3dmol extends React.Component {
     let sc = this.props.viewerParams.supercell;
     this.viewer.replicateUnitCell(sc[0], sc[1], sc[2], this.model);
     this.model.assignBonds();
-
-    // console.log(this.viewer.getView());
-    // this.viewer.setView([0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5, 0.5]);
 
     this.viewer.zoomTo();
     this.viewer.render();
@@ -68,9 +74,6 @@ class Visualizer3dmol extends React.Component {
   }
 
   render() {
-    if (this.viewer && this.model) {
-      this.updateView();
-    }
     return (
       <div id={this.divId} className="gldiv">
         No data!
