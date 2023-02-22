@@ -3,6 +3,7 @@ import React from "react";
 import * as $3Dmol from "3dmol";
 
 import "./Visualizer3dmol.css";
+import { isLabelWithInternallyDisabledControl } from "@testing-library/user-event/dist/utils";
 
 class Visualizer3dmol extends React.Component {
   constructor(props) {
@@ -51,9 +52,30 @@ class Visualizer3dmol extends React.Component {
     this.viewer.addUnitCell(this.model);
     let sc = this.props.viewerParams.supercell;
     this.viewer.replicateUnitCell(sc[0], sc[1], sc[2], this.model);
+
     this.model.assignBonds();
 
+    this.viewer.removeAllLabels();
+    if (this.props.viewerParams.atomLabels) {
+      this.model.atoms.forEach((atom) => {
+        this.viewer.addLabel(
+          atom.elem,
+          {
+            position: { x: atom.x, y: atom.y, z: atom.z },
+            fontColor: atom.color,
+            fontSize: 18,
+            showBackground: false,
+            backgroundOpacity: 0.5,
+            inFront: false,
+          },
+          null,
+          true
+        );
+      });
+    }
+
     this.viewer.zoomTo();
+    this.viewer.zoom(1.4);
     this.viewer.render();
   }
 
@@ -70,6 +92,7 @@ class Visualizer3dmol extends React.Component {
         this.viewer.setView([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]);
       }
       this.viewer.zoomTo();
+      this.viewer.zoom(1.4);
     }
   }
 

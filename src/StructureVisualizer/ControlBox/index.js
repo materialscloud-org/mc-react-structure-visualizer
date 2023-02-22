@@ -63,9 +63,8 @@ class ControlBox extends React.Component {
               type="checkbox"
               checked={this.props.viewerParams.atomLabels}
               onChange={() => this.handleOptionChange("atomLabels")}
-              disabled={true}
             />
-            Atom Labels
+            Atom labels
           </label>
           <label>
             <input
@@ -75,7 +74,7 @@ class ControlBox extends React.Component {
               onChange={() => this.handleOptionChange("packedCell")}
               disabled={true}
             />
-            Packed Cell
+            Packed cell
           </label>
           <label>
             <input
