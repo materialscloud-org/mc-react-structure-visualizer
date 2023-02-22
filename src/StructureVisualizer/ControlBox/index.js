@@ -25,19 +25,21 @@ class ControlBox extends React.Component {
     return (
       <div className="control-box">
         <div className="control-box-row">
-          <label>Supercell: </label>
-          {[0, 1, 2].map((index) => (
-            <input
-              key={index}
-              className="supercell-input"
-              type="number"
-              min="1"
-              value={this.props.viewerParams.supercell[index]}
-              onChange={(e) =>
-                this.handleSupercellChange(index, e.target.value)
-              }
-            />
-          ))}
+          <div className="supercell-container">
+            <label>Supercell: </label>
+            {[0, 1, 2].map((index) => (
+              <input
+                key={index}
+                className="supercell-input"
+                type="number"
+                min="1"
+                value={this.props.viewerParams.supercell[index]}
+                onChange={(e) =>
+                  this.handleSupercellChange(index, e.target.value)
+                }
+              />
+            ))}
+          </div>
           <div className="camera-controls">
             <label>Camera: </label>
             <button onClick={() => this.handleCameraEvent("x")}>x</button>

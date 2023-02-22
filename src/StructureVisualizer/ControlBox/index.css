@@ -27,8 +27,14 @@
 }
 
 .control-box-row {
-  margin: 5px 5px;
+  margin: 5px 0px;
+  padding: 0px 10px;
+  width: 100%;
   line-height: inherit;
+  /* background-color: pink; */
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
 }
 
 .control-box-row label {
@@ -55,6 +61,7 @@
 }
 
 .control-box-row .camera-controls {
-  margin: 0px 30px;
+  margin-left: auto;
+  margin-right: auto;
   display: inline;
 }
