@@ -30,7 +30,7 @@ class StructureVisualizer extends React.Component {
 
     this.handleViewerParamChange = this.handleViewerParamChange.bind(this);
     this.handleViewerEvent = this.handleViewerEvent.bind(this);
-    this.setMouseEnabled = this.setMouseEnabled.bind(this);
+    this.setMouseEnabledState = this.setMouseEnabledState.bind(this);
   }
 
   componentDidMount() {
@@ -47,8 +47,8 @@ class StructureVisualizer extends React.Component {
     }
   }
 
-  setMouseEnabled() {
-    this.setState({ mouseEnabled: true });
+  setMouseEnabledState(state) {
+    this.setState({ mouseEnabled: state });
   }
 
   handleViewerParamChange(param, value) {
@@ -72,7 +72,7 @@ class StructureVisualizer extends React.Component {
           viewerParams={this.state.viewerParams}
           cifText={this.props.cifText}
           mouseEnabled={this.state.mouseEnabled}
-          setMouseEnabled={this.setMouseEnabled}
+          setMouseEnabledState={this.setMouseEnabledState}
         />
         <ControlBox
           viewerParams={this.state.viewerParams}

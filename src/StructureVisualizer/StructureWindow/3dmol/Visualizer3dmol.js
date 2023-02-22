@@ -17,7 +17,7 @@ class Visualizer3dmol extends React.Component {
 
   componentDidMount() {
     // set up the viewer instance
-    let config = { backgroundColor: "mintcream", orthographic: true };
+    let config = { backgroundColor: "white", orthographic: true };
     this.viewer = $3Dmol.createViewer(this.divId, config);
 
     this.updateView();
