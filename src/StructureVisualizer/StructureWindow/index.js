@@ -20,11 +20,8 @@ class StructureWindow extends React.Component {
       mouseNoteClass = "mouse-disabled-note on";
     }
     return (
-      <div>
-        <div
-          className="structure-window-outer"
-          onClick={() => this.props.setMouseEnabledState(true)}
-        >
+      <div className="structure-window-outer">
+        <div onClick={() => this.props.setMouseEnabledState(true)}>
           <div className={swClassName}>
             <Visualizer3dmol
               ref={this.props.visualizerRef}
