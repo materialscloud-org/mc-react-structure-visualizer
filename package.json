@@ -1,6 +1,6 @@
 {
   "name": "mc-react-structure-visualizer",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "author": "Kristjan Eimre <kristjan.eimre@epfl.ch>",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -24,7 +24,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "SET NODE_ENV=production && rm -rf dist && npx babel src/StructureVisualizer --out-dir dist --copy-files",
+    "prebuild": "rimraf dist",
+    "build": "SET NODE_ENV=production && npx babel src/StructureVisualizer --out-dir dist --copy-files",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -51,6 +52,7 @@
     "@babel/core": "^7.20.12",
     "@babel/preset-env": "^7.20.2",
     "@babel/preset-react": "^7.18.6",
-    "babel-loader": "^9.1.2"
+    "babel-loader": "^9.1.2",
+    "rimraf": "^4.1.2"
   }
 }
