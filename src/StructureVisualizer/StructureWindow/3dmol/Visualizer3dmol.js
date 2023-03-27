@@ -62,11 +62,12 @@ class Visualizer3dmol extends React.Component {
           atom.elem,
           {
             position: { x: atom.x, y: atom.y, z: atom.z },
-            fontColor: atom.color,
+            fontColor: "black",
+            bold: true,
             fontSize: 18,
             showBackground: false,
-            backgroundOpacity: 0.5,
-            inFront: false,
+            backgroundOpacity: 1.0,
+            inFront: true,
           },
           null,
           true
