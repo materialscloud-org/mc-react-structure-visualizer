@@ -2,12 +2,43 @@ import React from "react";
 
 import * as $3Dmol from "3dmol";
 
+import { covalentRadii } from "./bondLengths";
+
 import "./Visualizer3dmol.css";
-import { isLabelWithInternallyDisabledControl } from "@testing-library/user-event/dist/utils";
+
+// override the covalent bond detection based on examples in MC3D
+const overrideBondLengths = {
+  // uuid = "aaea1e0f-337c-453f-a23a-acc06ddc93c9"; // BaTiO3 mc3d-46554/pbe
+  Ba: 0.92 * covalentRadii["Ba"],
+  Ti: 0.94 * covalentRadii["Ti"],
+  // uuid = "a490b0ff-012a-44c8-a48a-f734dc634b3c"; // EuI4La mc3d-34858/pbe
+  I: 1.05 * covalentRadii["I"],
+  Eu: 1.05 * covalentRadii["Eu"],
+};
+
+function setCustomBondLengths() {
+  function setCustomBondLength(elem, len) {
+    // 3dmol adds 0.25 to the total bond length as a "fudge_factor"
+    let fudgeCorrection = 0.125;
+    $3Dmol.setBondLength(elem, len - fudgeCorrection);
+  }
+
+  // override the default bond lengths with covalentRadii
+  Object.keys(covalentRadii).forEach((elem) => {
+    setCustomBondLength(elem, covalentRadii[elem]);
+  });
+
+  // override further based on custom-defined lengths
+  Object.keys(overrideBondLengths).forEach((elem) => {
+    setCustomBondLength(elem, overrideBondLengths[elem]);
+  });
+}
 
 class Visualizer3dmol extends React.Component {
   constructor(props) {
     super(props);
+
+    setCustomBondLengths();
 
     this.viewer = null;
     this.model = null;
