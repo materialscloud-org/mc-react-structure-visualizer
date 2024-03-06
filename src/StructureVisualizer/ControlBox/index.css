@@ -1,7 +1,6 @@
 .control-box {
   position: relative;
   z-index: 1;
-  height: 100px;
   width: 450px;
   background: rgb(250, 250, 250);
   text-align: center;
@@ -31,37 +30,37 @@
   padding: 0px 10px;
   width: 100%;
   line-height: inherit;
-  /* background-color: pink; */
   display: flex;
   justify-content: space-between;
   align-items: stretch;
 }
 
 .control-box-row label {
-  margin: 0px 5px;
+  display: flex;
+  flex-direction: row;
 }
 
 .control-box-row button {
   border-width: 1px;
-  border-style: outset;
-  border-color: rgb(0, 0, 0);
+  border-color: rgb(128, 128, 128); 
   border-radius: 4px;
-  display: inline-flex;
-  align-items: center;
-  /* margin-top: -10px; */
+  justify-content: center;
   margin: 0px 1px;
   height: 25px;
+  color: rgb(72, 70, 70);
+  background-color: rgb(240, 240, 240); 
 }
 
 .control-box-row button:hover {
   background-color: rgb(222, 222, 222);
 }
-.control-box-row .option-checkbox {
-  margin: 0px 2px;
+
+.camera-controls {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
 }
 
-.control-box-row .camera-controls {
-  margin-left: auto;
-  margin-right: auto;
-  display: inline;
+.control-box-row .control-box-row-checkbox {
+  margin-right: 10px; 
 }
