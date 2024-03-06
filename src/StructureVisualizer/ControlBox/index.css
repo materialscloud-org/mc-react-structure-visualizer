@@ -1,6 +1,7 @@
 .control-box {
   position: relative;
   z-index: 1;
+  height: 100px;
   width: 450px;
   background: rgb(250, 250, 250);
   text-align: center;
@@ -19,47 +20,74 @@
   height: 25px;
 }
 
+.supercell-container {
+  padding: 2px;
+}
+
 .supercell-input::-webkit-inner-spin-button,
 .supercell-input::-webkit-outer-spin-button {
   opacity: 1;
 }
 
 .control-box-row {
-  margin: 5px 0px;
-  padding: 0px 10px;
+  margin: 3px 3px;
+  padding: 3px 10px;
   width: 100%;
   line-height: inherit;
+  /* background-color: pink; */
   display: flex;
   justify-content: space-between;
   align-items: stretch;
 }
 
-.control-box-row label {
-  display: flex;
-  flex-direction: row;
+/* .control-box-row label {
+  margin: 0px 5px;
+} */
+
+.camera-controls {
+  align-items: center;
+  justify-items: center;
+  text-align: center;
+}
+
+.form-label {
+  margin-bottom: 0.0rem;
+}
+
+.form-control {
+  padding:0rem 0.275rem;
 }
 
 .control-box-row button {
   border-width: 1px;
-  border-color: rgb(128, 128, 128); 
+  border-style: outset;
+  border-color: rgb(0, 0, 0);
   border-radius: 4px;
-  justify-content: center;
-  margin: 0px 1px;
+  display: inline-flex;
+  align-items: center;
+  justify-items: center;
+  color: black;
+  background-color: #d8d4d4;
+  /* margin-top: -10px;  */
+  margin: 2px;
+  margin-left: 3px;
   height: 25px;
-  color: rgb(72, 70, 70);
-  background-color: rgb(240, 240, 240); 
 }
 
 .control-box-row button:hover {
   background-color: rgb(222, 222, 222);
 }
-
-.camera-controls {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
+.control-box-row .option-checkbox {
+  margin: 0px 2px;
 }
 
-.control-box-row .control-box-row-checkbox {
-  margin-right: 10px; 
+.control-box-row .camera-controls {
+  margin-left: auto;
+  margin-right: auto;
+  display: inline;
+}
+
+.option-checkbox {
+  padding: 3px , 3px;
+  margin-left: 2px;
 }
