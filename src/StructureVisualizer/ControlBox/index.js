@@ -39,6 +39,7 @@ class ControlBox extends React.Component {
 									className="supercell-input"
 									type="number"
 									min="1"
+                  max="99"
 									value={this.props.viewerParams.supercell[index]}
 									onChange={(e) =>
 										this.handleSupercellChange(index, e.target.value)
