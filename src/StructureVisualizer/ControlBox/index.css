@@ -15,20 +15,25 @@
   border-radius: 5px;
 }
 
+.supercell-container {
+  display: flex;
+  align-items: center;
+  gap: 2px
+}
+
 .supercell-input {
   width: 45px;
   height: 25px;
 }
 
-/* Always show the small arrows (needed for Chrome) */
 .supercell-input::-webkit-inner-spin-button,
 .supercell-input::-webkit-outer-spin-button {
   opacity: 1;
 }
 
 .control-box-row {
-  margin: 5px 0px;
-  padding: 0px 10px;
+  /* margin: 3px; */
+  padding: 4px 10px;
   width: 100%;
   line-height: inherit;
   /* background-color: pink; */
@@ -37,31 +42,52 @@
   align-items: stretch;
 }
 
-.control-box-row label {
-  margin: 0px 5px;
+.form-label {
+  margin-bottom: 0.0rem;
 }
 
-.control-box-row button {
+.form-control {
+  padding: 0rem 0.275rem;
+}
+
+.camera-controls {
+  margin-left: auto;
+  margin-right: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-items: center;
+  text-align: center;
+  gap: 2px;
+}
+
+.camera-button {
   border-width: 1px;
-  border-style: outset;
   border-color: rgb(0, 0, 0);
   border-radius: 4px;
   display: inline-flex;
   align-items: center;
-  /* margin-top: -10px; */
-  margin: 0px 1px;
+  justify-items: center;
+  color: black;
+  background-color: #d8d4d4;
+  /* margin: 1px; */
+  padding: 8px;
   height: 25px;
 }
 
-.control-box-row button:hover {
-  background-color: rgb(222, 222, 222);
-}
-.control-box-row .option-checkbox {
-  margin: 0px 2px;
+.camera-button:hover {
+  color: black;
+  background-color: #979494;
 }
 
-.control-box-row .camera-controls {
-  margin-left: auto;
-  margin-right: auto;
-  display: inline;
+.control-box-row .form-check-input {
+  margin-left: 0px;
+}
+
+.control-box-row .form-check-label {
+  margin-left: 4px;
+}
+
+.control-box-row .form-check {
+  margin: 0px;
+  padding: 0px;
 }
