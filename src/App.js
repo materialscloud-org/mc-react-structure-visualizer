@@ -7,7 +7,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import StructureVisualizer from "./StructureVisualizer";
 
-async function fetchCif() {
+async function fetchCif3D() {
   // Fetch a cif file from the Materials Cloud AiiDA rest api
   const aiidaRestEndpoint = "https://aiida.materialscloud.org/mc3d/api/v4";
   const uuid = "85260507-9cb4-4849-a10d-703f32697dd7";
@@ -24,19 +24,38 @@ async function fetchCif() {
   return jsonAiiDACif.data.download.data;
 }
 
+async function fetchCif2D() {
+  // Fetch a cif file from the Materials Cloud AiiDA rest api
+  const aiidaRestEndpoint = "https://aiida.materialscloud.org/mc2d/api/v4";
+  const uuid = "42744ae7-0c30-43df-8136-ab625b4f8425"; // graphene
+
+  const responseAiiDACif = await fetch(
+    `${aiidaRestEndpoint}/nodes/${uuid}/download?download_format=cif&download=false`
+  );
+  const jsonAiiDACif = await responseAiiDACif.json();
+
+  return jsonAiiDACif.data.download.data;
+}
+
 function App() {
-  const [cifText, setCifText] = useState(null);
+  const [cifText3D, setCifText3D] = useState(null);
+  const [cifText2D, setCifText2D] = useState(null);
 
   // componentDidMount equivalent
   useEffect(() => {
-    fetchCif().then((cifText) => {
-      setCifText(cifText);
+    fetchCif3D().then((cifText) => {
+      setCifText3D(cifText);
+    });
+    fetchCif2D().then((cifText) => {
+      setCifText2D(cifText);
     });
   });
 
   return (
     <div className="App">
-      <StructureVisualizer cifText={cifText} />
+      <StructureVisualizer cifText={cifText3D} />
+      <div style={{margin: "10px"}}></div>
+      <StructureVisualizer cifText={cifText2D} />
     </div>
   );
 }
