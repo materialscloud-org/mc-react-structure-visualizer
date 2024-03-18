@@ -3,9 +3,6 @@ import { Form, Button } from "react-bootstrap";
 import "./index.css";
 
 class ControlBox extends React.Component {
-	// constructor(props) {
-	// 	super(props);
-	// }
 
 	handleSupercellChange = (index, value) => {
 		let newSupercell = this.props.viewerParams.supercell;
@@ -39,7 +36,7 @@ class ControlBox extends React.Component {
 									className="supercell-input"
 									type="number"
 									min="1"
-                  max="99"
+									max="99"
 									value={this.props.viewerParams.supercell[index]}
 									onChange={(e) =>
 										this.handleSupercellChange(index, e.target.value)

@@ -68,7 +68,7 @@
   align-items: center;
   justify-items: center;
   color: black;
-  background-color: #d8d4d4;
+  background-color: #e0e0e0;
   /* margin: 1px; */
   padding: 8px;
   height: 25px;
@@ -76,7 +76,7 @@
 
 .camera-button:hover {
   color: black;
-  background-color: #979494;
+  background-color: #b9b9b9;
 }
 
 .control-box-row .form-check-input {
