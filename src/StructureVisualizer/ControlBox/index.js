@@ -30,7 +30,6 @@ class ControlBox extends React.Component {
 				<div className="control-box-row">
 					<div
 						className="supercell-container"
-						style={{ display: "flex", alignItems: "center" }}
 					>
 						<Form.Label>Supercell: </Form.Label>
 						<div style={{ display: "flex" }}>
@@ -51,13 +50,13 @@ class ControlBox extends React.Component {
 
 					<div className="camera-controls" >
 						<Form.Label>Camera: </Form.Label>
-						<Button onClick={() => this.handleCameraEvent("x")}>
+						<Button className="camera-button" onClick={() => this.handleCameraEvent("x")}>
 							x
 						</Button>
-						<Button onClick={() => this.handleCameraEvent("y")}>
+						<Button className="camera-button" onClick={() => this.handleCameraEvent("y")}>
 							y
 						</Button>
-						<Button onClick={() => this.handleCameraEvent("z")}>
+						<Button className="camera-button" onClick={() => this.handleCameraEvent("z")}>
 							z
 						</Button>
 					</div>
