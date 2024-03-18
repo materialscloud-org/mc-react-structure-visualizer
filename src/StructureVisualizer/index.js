@@ -1,87 +1,63 @@
-import React from "react";
-
+import React, { useState, useEffect, useRef } from "react";
 import ControlBox from "./ControlBox";
-
 import StructureWindow from "./StructureWindow";
-
 import "./index.css";
 
-class StructureVisualizer extends React.Component {
-  constructor(props) {
-    super(props);
+const StructureVisualizer = (props) => {
+  const [viewerParams, setViewerParams] = useState({
+    supercell: props.initSupercell || [2, 2, 2],
+    bonds: true,
+    atomLabels: false,
+    packedCell: false,
+    vdwRadius: false,
+  });
+  const [mouseEnabled, setMouseEnabled] = useState(false);
+  const visualizerRef = useRef(null);
+  const wrapperRef = useRef(null);
 
-    this.state = {
-      viewerParams: {
-        supercell: [2, 2, 2],
-        bonds: true,
-        atomLabels: false,
-        packedCell: false,
-        vdwRadius: false,
-      },
-      mouseEnabled: false,
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (wrapperRef && !wrapperRef.current.contains(event.target)) {
+        setMouseEnabled(false);
+      }
     };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
-    // use Ref to send events to the visualizer backend
-    this.visualizerRef = React.createRef();
+  const setMouseEnabledState = (state) => {
+    setMouseEnabled(state);
+  };
 
-    // Ref to detect click outside
-    this.wrapperRef = React.createRef();
-    this.handleClickOutside = this.handleClickOutside.bind(this);
+  const handleViewerParamChange = (param, value) => {
+    setViewerParams((prevParams) => ({
+      ...prevParams,
+      [param]: value,
+    }));
+  };
 
-    this.handleViewerParamChange = this.handleViewerParamChange.bind(this);
-    this.handleViewerEvent = this.handleViewerEvent.bind(this);
-    this.setMouseEnabledState = this.setMouseEnabledState.bind(this);
-  }
+  const handleViewerEvent = (param, value) => {
+    visualizerRef.current.handleEvent(param, value);
+  };
 
-  componentDidMount() {
-    document.addEventListener("mousedown", this.handleClickOutside);
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener("mousedown", this.handleClickOutside);
-  }
-
-  handleClickOutside(event) {
-    if (this.wrapperRef && !this.wrapperRef.current.contains(event.target)) {
-      this.setState({ mouseEnabled: false });
-    }
-  }
-
-  setMouseEnabledState(state) {
-    this.setState({ mouseEnabled: state });
-  }
-
-  handleViewerParamChange(param, value) {
-    this.setState({
-      viewerParams: {
-        ...this.state.viewerParams,
-        [param]: value,
-      },
-    });
-  }
-
-  handleViewerEvent(param, value) {
-    this.visualizerRef.current.handleEvent(param, value);
-  }
-
-  render() {
-    return (
-      <div ref={this.wrapperRef} className="structure-visualizer">
-        <StructureWindow
-          visualizerRef={this.visualizerRef}
-          viewerParams={this.state.viewerParams}
-          cifText={this.props.cifText}
-          mouseEnabled={this.state.mouseEnabled}
-          setMouseEnabledState={this.setMouseEnabledState}
-        />
-        <ControlBox
-          viewerParams={this.state.viewerParams}
-          onViewerParamChange={this.handleViewerParamChange}
-          onViewerEvent={this.handleViewerEvent}
-        />
-      </div>
-    );
-  }
-}
+  return (
+    <div ref={wrapperRef} className="structure-visualizer">
+      <StructureWindow
+        visualizerRef={visualizerRef}
+        viewerParams={viewerParams}
+        cifText={props.cifText}
+        mouseEnabled={mouseEnabled}
+        setMouseEnabledState={setMouseEnabledState}
+      />
+      <ControlBox
+        viewerParams={viewerParams}
+        onViewerParamChange={handleViewerParamChange}
+        onViewerEvent={handleViewerEvent}
+      />
+    </div>
+  );
+};
 
 export default StructureVisualizer;
