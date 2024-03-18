@@ -10,7 +10,7 @@ export default defineConfig({
   build: {
     lib: {
       entry: resolve(__dirname, "src/StructureVisualizer/index.jsx"),
-      fileName: 'main',
+      fileName: "main",
       formats: ["es"],
     },
     rollupOptions: {

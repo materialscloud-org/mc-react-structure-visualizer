@@ -101,7 +101,7 @@ class Visualizer3dmol extends React.Component {
             inFront: true,
           },
           null,
-          true
+          true,
         );
       });
     }

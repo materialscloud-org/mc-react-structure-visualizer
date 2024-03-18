@@ -18,7 +18,7 @@
 .supercell-container {
   display: flex;
   align-items: center;
-  gap: 2px
+  gap: 2px;
 }
 
 .supercell-input {
@@ -43,7 +43,7 @@
 }
 
 .form-label {
-  margin-bottom: 0.0rem;
+  margin-bottom: 0rem;
 }
 
 .form-control {

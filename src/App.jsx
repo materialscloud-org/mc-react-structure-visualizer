@@ -13,7 +13,7 @@ async function fetchCif3D() {
   //const uuid = "a490b0ff-012a-44c8-a48a-f734dc634b3c"; // EuI4La mc3d-34858/pbe
 
   const responseAiiDACif = await fetch(
-    `${aiidaRestEndpoint}/nodes/${uuid}/download?download_format=cif&download=false`
+    `${aiidaRestEndpoint}/nodes/${uuid}/download?download_format=cif&download=false`,
   );
   const jsonAiiDACif = await responseAiiDACif.json();
 
@@ -26,7 +26,7 @@ async function fetchCif2D() {
   const uuid = "42744ae7-0c30-43df-8136-ab625b4f8425"; // graphene
 
   const responseAiiDACif = await fetch(
-    `${aiidaRestEndpoint}/nodes/${uuid}/download?download_format=cif&download=false`
+    `${aiidaRestEndpoint}/nodes/${uuid}/download?download_format=cif&download=false`,
   );
   const jsonAiiDACif = await responseAiiDACif.json();
 
@@ -50,7 +50,7 @@ function App() {
   return (
     <div className="App">
       <StructureVisualizer cifText={cifText3D} />
-      <div style={{margin: "10px"}}></div>
+      <div style={{ margin: "10px" }}></div>
       <StructureVisualizer cifText={cifText2D} initSupercell={[3, 3, 1]} />
     </div>
   );
