@@ -73,17 +73,16 @@ class ControlBox extends React.Component {
           <Form.Check
             className="option-checkbox"
             type="checkbox"
-            checked={this.props.viewerParams.atomLabels}
-            onChange={() => this.handleOptionChange("atomLabels")}
-            label="Atom labels"
+            checked={this.props.viewerParams.packedCell}
+            onChange={() => this.handleOptionChange("packedCell")}
+            label="Packed cell"
           />
           <Form.Check
             className="option-checkbox"
             type="checkbox"
-            checked={this.props.viewerParams.packedCell}
-            onChange={() => this.handleOptionChange("packedCell")}
-            disabled={true}
-            label="Packed cell"
+            checked={this.props.viewerParams.atomLabels}
+            onChange={() => this.handleOptionChange("atomLabels")}
+            label="Atom labels"
           />
           <Form.Check
             className="option-checkbox"

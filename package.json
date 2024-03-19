@@ -14,7 +14,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "3dmol": "^2.1.0"
+    "3dmol": "^2.1.0",
+    "mathjs": "^12.4.1"
   },
   "peerDependencies": {
     "bootstrap": "^5.2.3",

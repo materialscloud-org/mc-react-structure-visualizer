@@ -7,8 +7,8 @@ const StructureVisualizer = (props) => {
   const [viewerParams, setViewerParams] = useState({
     supercell: props.initSupercell || [2, 2, 2],
     bonds: true,
+    packedCell: true,
     atomLabels: false,
-    packedCell: false,
     vdwRadius: false,
   });
   const [mouseEnabled, setMouseEnabled] = useState(false);
