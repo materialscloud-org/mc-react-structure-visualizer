@@ -14,7 +14,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "3dmol": "^2.0.2"
+    "3dmol": "^2.1.0"
   },
   "peerDependencies": {
     "bootstrap": "^5.2.3",
