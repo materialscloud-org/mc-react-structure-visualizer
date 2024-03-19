@@ -37,3 +37,12 @@ which will create a `.tgz` file that can then be installed by the external appli
 ```
 npm install /path/to/package-x.y.z.tgz
 ```
+
+### Publishing a new version
+
+To make a new version and publish to npm via GitHub Actions:
+
+```bash
+npm version <patch/minor/major>
+git push --follow-tags
+```
