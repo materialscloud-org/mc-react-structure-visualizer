@@ -2,8 +2,6 @@ import React from "react";
 
 import * as $3Dmol from "3dmol";
 
-import * as math from "mathjs";
-
 import { covalentRadii } from "./bondLengths";
 
 import "./Visualizer3dmol.css";
@@ -12,31 +10,16 @@ function mod(n, m) {
   return ((n % m) + m) % m;
 }
 
-// override the covalent bond detection based on examples in MC3D
-const overrideBondLengths = {
-  // uuid = "aaea1e0f-337c-453f-a23a-acc06ddc93c9"; // BaTiO3 mc3d-46554/pbe
-  Ba: 0.92 * covalentRadii["Ba"],
-  Ti: 0.94 * covalentRadii["Ti"],
-  // uuid = "a490b0ff-012a-44c8-a48a-f734dc634b3c"; // EuI4La mc3d-34858/pbe
-  I: 1.05 * covalentRadii["I"],
-  Eu: 1.05 * covalentRadii["Eu"],
-};
-
 function setCustomBondLengths() {
   function setCustomBondLength(elem, len) {
     // 3dmol adds 0.25 to the total bond length as a "fudge_factor"
-    let fudgeCorrection = 0.125;
-    $3Dmol.setBondLength(elem, len - fudgeCorrection);
+    // to correct for this, one could here subtract 0.125 from each atom's
+    // bond length but it seems it's better to keep the "fudge factor".
+    $3Dmol.setBondLength(elem, len);
   }
-
   // override the default bond lengths with covalentRadii
   Object.keys(covalentRadii).forEach((elem) => {
     setCustomBondLength(elem, covalentRadii[elem]);
-  });
-
-  // override further based on custom-defined lengths
-  Object.keys(overrideBondLengths).forEach((elem) => {
-    setCustomBondLength(elem, overrideBondLengths[elem]);
   });
 }
 
@@ -92,16 +75,6 @@ class Visualizer3dmol extends React.Component {
       let fracConversionMatrix = new $3Dmol.Matrix3().getInverse3(cellMatrix);
 
       let final_atoms = [];
-
-      // console.log("loadedAtoms", loadedAtoms);
-      // loadedAtoms = [
-      //   {
-      //     elem: "C",
-      //     x: 0.1,
-      //     y: 0.1,
-      //     z: 50.0,
-      //   },
-      // ];
 
       // in case of packed cell, make sure all the initially specified atoms
       // are folded back to the unit cell
@@ -198,7 +171,7 @@ class Visualizer3dmol extends React.Component {
       style.sphere.scale = 1.0;
     }
     if (this.props.viewerParams.bonds) {
-      style.stick = { radius: 0.2, colorscheme: "Jmol" };
+      style.stick = { radius: 0.15, colorscheme: "Jmol" };
     }
 
     this.viewer.setStyle(style);
