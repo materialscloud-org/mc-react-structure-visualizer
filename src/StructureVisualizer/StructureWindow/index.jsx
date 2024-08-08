@@ -13,10 +13,9 @@ class StructureWindow extends React.Component {
     let swClassName = "structure-window";
     if (!this.props.mouseEnabled) swClassName += " disable-mouse";
 
-    let mouseNoteText = "Interaction off";
+    let mouseNoteText = "Click to interact";
     let mouseNoteClass = "mouse-disabled-note";
     if (this.props.mouseEnabled) {
-      mouseNoteText = "Interaction on";
       mouseNoteClass = "mouse-disabled-note on";
     }
     return (

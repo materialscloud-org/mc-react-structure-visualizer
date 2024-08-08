@@ -45,7 +45,6 @@ function App() {
   const [cifText3D, setCifText3D] = useState(null);
   const [cifText2D, setCifText2D] = useState(null);
 
-  // componentDidMount equivalent
   useEffect(() => {
     fetchCif3D().then((cifText) => {
       setCifText3D(cifText);
