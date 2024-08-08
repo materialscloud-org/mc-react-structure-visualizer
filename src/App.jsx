@@ -15,6 +15,7 @@ async function fetchCif3D() {
   // uuid = "a490b0ff-012a-44c8-a48a-f734dc634b3c"; // EuI4La mc3d-34858/pbe
   // uuid = "74046bff-82f1-4ced-b33e-54c09db90b78"; // "bizarre" graphite mc3d-19759/pbe
   // uuid = "f5e7395f-ecad-4227-9789-21e7e4d21124"; // Al2H4Li2O14Si4 (water molecule) mc3d-12502/pbe
+  // uuid = "ccf74efe-af52-475a-abd7-d363aa2ce63e"; // mc3d-10008/pbe
 
   const responseAiiDACif = await fetch(
     `${aiidaRestEndpoint}/nodes/${uuid}/download?download_format=cif&download=false`,

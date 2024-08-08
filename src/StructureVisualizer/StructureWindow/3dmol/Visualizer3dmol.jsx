@@ -19,7 +19,7 @@ function setCustomBondLengths() {
   }
   // override the default bond lengths with covalentRadii
   Object.keys(covalentRadii).forEach((elem) => {
-    setCustomBondLength(elem, covalentRadii[elem]);
+    setCustomBondLength(elem, 1.05 * covalentRadii[elem]);
   });
 }
 
@@ -101,6 +101,10 @@ class Visualizer3dmol extends React.Component {
 
       // Build the supercell
 
+      // distance in fractional coordinates to the edge to be
+      // considered "on edge" for packed cell option
+      let edgeDelta = 0.05;
+
       let sc = this.props.viewerParams.supercell;
       for (let i = -1; i < sc[0] + 1; i++) {
         for (let j = -1; j < sc[1] + 1; j++) {
@@ -125,9 +129,9 @@ class Visualizer3dmol extends React.Component {
   
                   // prettier-ignore
                   if (
-                    frac.x > -0.0001 && frac.x < sc[0] + 0.0001 &&
-                    frac.y > -0.0001 && frac.y < sc[1] + 0.0001 &&
-                    frac.z > -0.0001 && frac.z < sc[2] + 0.0001
+                    frac.x > -edgeDelta && frac.x < sc[0] + edgeDelta &&
+                    frac.y > -edgeDelta && frac.y < sc[1] + edgeDelta &&
+                    frac.z > -edgeDelta && frac.z < sc[2] + edgeDelta
                   ) {
                     final_atoms.push({
                       elem: atom.elem,
