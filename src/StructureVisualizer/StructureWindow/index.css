@@ -18,11 +18,11 @@
   width: 100%;
   background: white;
   text-align: center;
-  border: 1px solid #999;
+  border-bottom: 1px solid #999;
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 5px;
+  /* border-radius: 5px; */
 }
 
 .disable-mouse {
@@ -37,7 +37,7 @@
   border-radius: 5px;
   position: absolute;
   bottom: 10px;
-  right: 10px;
+  left: 10px;
   z-index: 3;
   cursor: pointer;
   user-select: none;

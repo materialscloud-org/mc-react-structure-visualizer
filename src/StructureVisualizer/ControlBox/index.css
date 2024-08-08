@@ -4,21 +4,22 @@
   width: 100%;
   background: #f8f8f8;
   text-align: center;
-  border: 1px solid #999;
+  /* border: 1px solid #999; */
   display: flex;
   flex-wrap: wrap;
   flex-direction: column;
   justify-content: center;
   align-items: start;
-  border-radius: 5px;
-  margin-top: -5px;
-  padding: 15px 10px 10px 10px;
+  /* border-radius: 5px; */
+  margin-top: -2px;
+  padding: 10px;
 }
 
 .supercell-container {
   display: flex;
   align-items: center;
   gap: 2px;
+  padding: 2px;
 }
 
 .supercell-input {
@@ -33,7 +34,7 @@
 
 .control-box-row {
   /* margin: 3px; */
-  padding: 4px;
+  padding: 2px;
   width: 100%;
   line-height: inherit;
   /* background-color: pink; */
@@ -59,6 +60,7 @@
   justify-items: center;
   text-align: center;
   gap: 2px;
+  padding: 2px;
 }
 
 .camera-button {

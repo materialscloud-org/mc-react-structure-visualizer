@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 
-import "./App.css";
 import StructureVisualizer from "./StructureVisualizer";
 
 async function fetchCif3D() {
