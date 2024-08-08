@@ -1,6 +1,6 @@
 {
   "name": "mc-react-structure-visualizer",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "author": "Kristjan Eimre <kristjan.eimre@epfl.ch>",
   "type": "module",
   "module": "dist/main.js",
