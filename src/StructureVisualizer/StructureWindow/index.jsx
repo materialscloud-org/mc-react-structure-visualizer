@@ -21,7 +21,10 @@ class StructureWindow extends React.Component {
     }
     return (
       <div className="structure-window-outer">
-        <div onClick={() => this.props.setMouseEnabledState(true)}>
+        <div
+          className="structure-window-click-handler"
+          onClick={() => this.props.setMouseEnabledState(true)}
+        >
           <div className={swClassName}>
             <Visualizer3dmol
               ref={this.props.visualizerRef}

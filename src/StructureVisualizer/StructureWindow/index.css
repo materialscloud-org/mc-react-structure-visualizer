@@ -1,12 +1,21 @@
 .structure-window-outer {
   position: relative;
+  /* height: 100%; */
+  width: 100%;
+  flex: 1;
+  display: flex;
+  align-items: stretch;
+}
+
+.structure-window-click-handler {
+  width: 100%;
 }
 
 .structure-window {
   position: relative;
   z-index: 2;
-  height: 370px;
-  width: 450px;
+  height: 100%;
+  width: 100%;
   background: white;
   text-align: center;
   border: 1px solid #999;

@@ -57,8 +57,9 @@ function App() {
 
   return (
     <div className="App">
-      <StructureVisualizer cifText={cifText3D} />
-      <div style={{ margin: "10px" }}></div>
+      <div style={{ width: "450px", height: "450px", margin: "10px" }}>
+        <StructureVisualizer cifText={cifText3D} />
+      </div>
       <StructureVisualizer cifText={cifText2D} initSupercell={[3, 3, 1]} />
     </div>
   );
