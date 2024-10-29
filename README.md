@@ -43,6 +43,6 @@ npm install /path/to/package-x.y.z.tgz
 To make a new version and publish to npm via GitHub Actions:
 
 ```bash
-npm version <patch/minor/major>
+npm version <major/minor/patch>
 git push --follow-tags
 ```
