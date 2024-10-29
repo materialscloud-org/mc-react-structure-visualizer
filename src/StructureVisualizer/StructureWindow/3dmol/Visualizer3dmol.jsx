@@ -103,7 +103,7 @@ class Visualizer3dmol extends React.Component {
 
       // distance in fractional coordinates to the edge to be
       // considered "on edge" for packed cell option
-      let edgeDelta = 0.05;
+      let edgeDelta = 0.03;
 
       let sc = this.props.viewerParams.supercell;
       for (let i = -1; i < sc[0] + 1; i++) {
