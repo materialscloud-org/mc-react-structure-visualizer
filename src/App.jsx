@@ -33,6 +33,9 @@ async function fetchCif2D() {
   // potentially problematic cases w.r.t. bond lengths
   uuid = "89a8e9ec-d89b-47bb-a85e-8f1b6734a69c"; // Bi
 
+  // structure not centered in z
+  uuid = "ba8bbdd9-defc-4292-af7d-ed3eb73f778e"; // AgBr
+
   const responseAiiDACif = await fetch(
     `${aiidaRestEndpoint}/nodes/${uuid}/download?download_format=cif&download=false`,
   );
@@ -57,7 +60,10 @@ function App() {
   return (
     <div className="App">
       <div style={{ width: "450px", height: "450px", margin: "10px" }}>
-        <StructureVisualizer cifText={cifText3D} />
+        <StructureVisualizer cifText={cifText3D} initSupercell={[1, 1, 1]} />
+      </div>
+      <div style={{ width: "450px", height: "450px", margin: "10px" }}>
+        <StructureVisualizer cifText={cifText2D} initSupercell={[3, 3, 1]} />
       </div>
       <StructureVisualizer cifText={cifText2D} initSupercell={[3, 3, 1]} />
     </div>

@@ -10,6 +10,71 @@ function mod(n, m) {
   return ((n % m) + m) % m;
 }
 
+function tryToCenterStructureInVacuum(atoms, fracConversionMatrix, cellMatrix) {
+  // convert atoms to fractional coordinates
+  // and choose the most central one as reference
+  let fatoms = []
+  let refAtomFrac = null
+  let bestDist = null
+  atoms.forEach((atom) => {
+    let cart = new $3Dmol.Vector3(atom.x, atom.y, atom.z);
+    let frac = cart.clone().applyMatrix3(fracConversionMatrix);
+    fatoms.push({
+      elem: atom.elem,
+      frac: frac
+    });
+    let centDist = frac.clone().sub(new $3Dmol.Vector3(0.5, 0.5, 0.5))
+    if (bestDist) {
+      if (centDist < bestDist) {
+        refAtomFrac = frac
+        bestDist = centDist
+      }
+    } else {
+      refAtomFrac = frac
+      bestDist = centDist
+    }
+  });
+
+  // Choose periodic replicas closest to the reference atom
+  // also calculate the geometric center in fractional coordinates
+  let fracGeometricCenter = new $3Dmol.Vector3(0.0, 0.0, 0.0);
+  fatoms.forEach((fatom) => {
+    let deltaFrac = new $3Dmol.Vector3(0.0, 0.0, 0.0);
+    deltaFrac.subVectors(refAtomFrac, fatom.frac);
+    if (deltaFrac.x >  0.5) fatom.frac.x += 1.0;
+    if (deltaFrac.x < -0.5) fatom.frac.x -= 1.0;
+    if (deltaFrac.y >  0.5) fatom.frac.y += 1.0;
+    if (deltaFrac.y < -0.5) fatom.frac.y -= 1.0;
+    if (deltaFrac.z >  0.5) fatom.frac.z += 1.0;
+    if (deltaFrac.z < -0.5) fatom.frac.z -= 1.0;
+    fracGeometricCenter.add(fatom.frac)
+  });
+
+  fracGeometricCenter.divideScalar(fatoms.length);
+  // shift each atom such that the geometric center matches cell center
+  let fracShift = new $3Dmol.Vector3(0.0, 0.0, 0.0);
+  let cellCenter = new $3Dmol.Vector3(0.5, 0.5, 0.5);
+  fracShift.subVectors(fracGeometricCenter, cellCenter);
+
+  console.log(fracShift);
+
+  let finalAtoms = []
+  fatoms.forEach((fatom) => {
+    let newFrac = new $3Dmol.Vector3(0.0, 0.0, 0.0);
+    newFrac.subVectors(fatom.frac, fracShift);
+    // convert back to cartesian
+    let cart = newFrac.applyMatrix3(cellMatrix);
+    finalAtoms.push({
+      elem: fatom.elem,
+      x: cart.x,
+      y: cart.y,
+      z: cart.z
+    })
+  });
+  return finalAtoms;
+}
+
+
 function setCustomBondLengths() {
   function setCustomBondLength(elem, len) {
     // 3dmol adds 0.25 to the total bond length as a "fudge_factor"
@@ -98,6 +163,11 @@ class Visualizer3dmol extends React.Component {
           z: cart.z,
         });
       });
+
+      let tryCenterVacuum = true
+      if (tryCenterVacuum) {
+        atoms = tryToCenterStructureInVacuum(atoms, fracConversionMatrix, cellMatrix)
+      }
 
       // Build the supercell
 
