@@ -1,0 +1,12 @@
+.cube-visualizer {
+  width: 100%;
+  height: 100%;
+  min-height: 250px;
+  min-width: 250px;
+  font-size: 16px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 5px;
+  border: 1px solid #999;
+  overflow: hidden;
+}
