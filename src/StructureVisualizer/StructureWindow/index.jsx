@@ -29,6 +29,7 @@ class StructureWindow extends React.Component {
               ref={this.props.visualizerRef}
               viewerParams={this.props.viewerParams}
               cifText={this.props.cifText}
+              labelMapping={this.props.labelMapping}
             />
           </div>
         </div>

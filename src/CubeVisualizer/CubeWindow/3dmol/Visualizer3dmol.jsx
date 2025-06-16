@@ -56,21 +56,20 @@ class Visualizer3dmol extends React.Component {
   // Parse CUBE file
   custom3dmolSetup() {
     this.model = this.viewer.addModel();
-      
+
     if (this.props.cubeText) {
       // 3dMol CUBE PARSER get crystal and atoms
       // 3dMol VolData gets the volumetric data
       // I dont believe there is a method that does both
-      // Im too lazy to write my own parser. 
+      // Im too lazy to write my own parser.
       // So we read the file twice.
 
       // we remove all shapes on init;
       // This stops shape duplication
-      this.viewer.removeAllShapes()
-
+      this.viewer.removeAllShapes();
 
       const parsedCube = $3Dmol.Parsers.CUBE(this.props.cubeText);
-      console.log(parsedCube)
+      console.log(parsedCube);
       const volData = new $3Dmol.VolumeData(this.props.cubeText, "cube");
 
       // First array is atoms list
@@ -78,8 +77,6 @@ class Visualizer3dmol extends React.Component {
 
       const modelData = parsedCube.modelData || [];
       const cellData = modelData.length > 0 ? modelData[0].cryst : null;
-
-      console.log(loadedAtoms)
 
       if (cellData) {
         // If crystal cell parameters exist, set them on the model
@@ -89,43 +86,50 @@ class Visualizer3dmol extends React.Component {
           cellData.c || 0,
           cellData.alpha || 90,
           cellData.beta || 90,
-          cellData.gamma || 90
+          cellData.gamma || 90,
         );
       }
 
-    // Prepare atoms for adding
-    const finalAtoms = loadedAtoms.map((atom) => ({
-      elem: atom.elem,
-      x: atom.x,
-      y: atom.y,
-      z: atom.z,
-      hetflag: atom.hetflag || true,  // preserve flags if any
-      bonds: atom.bonds || [],
-      bondOrder: atom.bondOrder || [],
-      properties: atom.properties || {}
-    }));
+      // Prepare atoms for adding
+      const finalAtoms = loadedAtoms.map((atom) => ({
+        elem: atom.elem,
+        x: atom.x,
+        y: atom.y,
+        z: atom.z,
+        hetflag: atom.hetflag || true, // preserve flags if any
+        bonds: atom.bonds || [],
+        bondOrder: atom.bondOrder || [],
+        properties: atom.properties || {},
+      }));
 
+      console.log(this.viewerParams);
 
-    console.log(this.viewer)
-    
-    //this.viewer.removeShape(94)
-    this.viewer.addVolumetricData(this.props.cubeText, "cube", {
-    isoval: 0.03,
-    color: "green",
-    opacity: 0.25,
-    id: "pos"
+      const colors = this.props.viewerParams.isovalueColors || {};
+      const posColor = colors.pos || "red";
+      const negColor = colors.neg || "blue";
+      const isos = this.props.viewerParams.isovalues || {};
+
+      const posIso = isos.pos;
+      const negIso = isos.neg;
+
+      console.log(posIso);
+
+      this.viewer.addVolumetricData(this.props.cubeText, "cube", {
+        isoval: posIso,
+        color: posColor,
+        opacity: 0.5,
+        id: "pos",
       });
 
-    this.viewer.addVolumetricData(this.props.cubeText, "cube", {
-    isoval: -0.03,
-    color: "blue",
-    opacity: 0.25,
-    id: "neg"
-
+      this.viewer.addVolumetricData(this.props.cubeText, "cube", {
+        isoval: negIso,
+        color: negColor,
+        opacity: 0.5,
+        id: "neg",
       });
 
-    // Add atoms to the model
-    this.model.addAtoms(finalAtoms);
+      // Add atoms to the model
+      this.model.addAtoms(finalAtoms);
     }
     this.viewer.zoomTo(); // adjusts camera to fit content
     this.viewer.render();
@@ -173,7 +177,6 @@ class Visualizer3dmol extends React.Component {
         );
       });
     }
-
 
     this.viewer.zoomTo();
     this.viewer.zoom(1.4);

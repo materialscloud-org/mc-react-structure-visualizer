@@ -10,6 +10,7 @@ const StructureVisualizer = (props) => {
     packedCell: true,
     atomLabels: false,
     vdwRadius: false,
+    labelMapping: false
   });
   const [mouseEnabled, setMouseEnabled] = useState(false);
   const visualizerRef = useRef(null);
@@ -50,6 +51,7 @@ const StructureVisualizer = (props) => {
         cifText={props.cifText}
         mouseEnabled={mouseEnabled}
         setMouseEnabledState={setMouseEnabledState}
+        labelMapping={props.labelMapping}
       />
       <ControlBox
         viewerParams={viewerParams}

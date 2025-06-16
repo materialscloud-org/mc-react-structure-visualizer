@@ -15,7 +15,8 @@
   },
   "dependencies": {
     "3dmol": "^2.3.0",
-    "mathjs": "^12.4.1"
+    "mathjs": "^12.4.1",
+    "tinycolor2": "^1.6.0"
   },
   "peerDependencies": {
     "bootstrap": "^5.2.3",

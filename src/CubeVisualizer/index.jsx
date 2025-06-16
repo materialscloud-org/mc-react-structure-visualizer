@@ -10,7 +10,20 @@ const CubeVisualizer = (props) => {
     packedCell: true,
     atomLabels: false,
     vdwRadius: false,
+    isoValues: {
+      pos: 0.0,
+      neg: 0.0,
+    },
+    isovalueColors: {
+      pos: "#ff0000",
+      neg: "#0000ff",
+    },
+    cubeRange: {
+      min: props.cubeRange.min || 0,
+      max: props.cubeRange.max || 0,
+    },
   });
+
   const [mouseEnabled, setMouseEnabled] = useState(false);
   const visualizerRef = useRef(null);
   const wrapperRef = useRef(null);

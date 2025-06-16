@@ -9,12 +9,16 @@ export default defineConfig({
   plugins: [react(), libInjectCss()],
   build: {
     lib: {
-      entry: resolve(__dirname, "src/StructureVisualizer/index.jsx"),
+      entry: resolve(__dirname, "src/index.js"),
+      name: "Structure Visualizer",
       fileName: "main",
-      formats: ["es"],
+      formats: ["es", "cjs"],
     },
     rollupOptions: {
       external: [...Object.keys(packageJson.peerDependencies)],
+      output: {
+        exports: "named",
+      },
     },
   },
 });

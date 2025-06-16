@@ -79,8 +79,11 @@ class Visualizer3dmol extends React.Component {
       // in case of packed cell, make sure all the initially specified atoms
       // are folded back to the unit cell
       let atoms = [];
-      loadedAtoms.forEach((atom) => {
+
+      loadedAtoms.forEach((atom, i) => {
         let cart = new $3Dmol.Vector3(atom.x, atom.y, atom.z);
+        let label = this.props.labelMapping?.[i] || atom.elem;
+
         if (this.props.viewerParams.packedCell) {
           let frac = cart.clone().applyMatrix3(fracConversionMatrix);
           let folded_frac = new $3Dmol.Vector3(
@@ -96,6 +99,7 @@ class Visualizer3dmol extends React.Component {
           x: cart.x,
           y: cart.y,
           z: cart.z,
+          label: label
         });
       });
 
@@ -138,6 +142,7 @@ class Visualizer3dmol extends React.Component {
                       x: cart.x,
                       y: cart.y,
                       z: cart.z,
+                      label: atom.label
                     });
                   }
                 });
@@ -152,6 +157,7 @@ class Visualizer3dmol extends React.Component {
                   x: atom.x + offset.x,
                   y: atom.y + offset.y,
                   z: atom.z + offset.z,
+                  label: atom.label
                 });
               });
             }
@@ -190,7 +196,7 @@ class Visualizer3dmol extends React.Component {
     if (this.props.viewerParams.atomLabels) {
       this.model.atoms.forEach((atom) => {
         this.viewer.addLabel(
-          atom.elem,
+          atom.label,
           {
             position: { x: atom.x, y: atom.y, z: atom.z },
             fontColor: "black",

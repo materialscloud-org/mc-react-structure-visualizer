@@ -4,7 +4,6 @@ import StructureVisualizer from "./StructureVisualizer";
 
 import CubeVisualizer from "./CubeVisualizer";
 
-
 const TESTCUBE = `Psi4 Gaussian Cube File.
 Property: Dt [e/a0^3]. Isocontour range for 85% of the density: (0.0634405,0).
      3  -5.478356  -5.210199  -4.000000
@@ -1320,6 +1319,26 @@ Property: Dt [e/a0^3]. Isocontour range for 85% of the density: (0.0634405,0).
  2.59744E-11  7.73996E-12 
 `;
 
+function getCubeDataRange(cubeString) {
+  const lines = cubeString.trim().split(/\r?\n/);
+
+  // Skip the first 6 lines (typical for cube files)
+  let i = 6;
+
+  const natoms = Math.abs(parseInt(lines[2].trim().split(/\s+/)[0]));
+  i += natoms; // Skip atom lines
+
+  const dataLines = lines.slice(i);
+
+  const allValues = dataLines.flatMap((line) =>
+    line.trim().split(/\s+/).map(Number),
+  );
+
+  const min = Math.min(...allValues);
+  const max = Math.max(...allValues);
+
+  return { min, max };
+}
 
 async function fetchCif3D() {
   // Fetch a cif file from the Materials Cloud AiiDA rest api
@@ -1373,14 +1392,46 @@ function App() {
     });
   });
 
+  const labelMapping = [
+    "1",
+    "1",
+    "1",
+    "1",
+    "1",
+    "1",
+    "1",
+    "1",
+    "1",
+    "1",
+    "4",
+    "4",
+    "4",
+    "4",
+    "4",
+    "4",
+    "4",
+    "4",
+    "4",
+    "4",
+    "4",
+    "4",
+    "4",
+    "4",
+    "4",
+    "4",
+  ];
+
   return (
     <div className="App">
-      <div style={{ width: "450px", height: "450px", margin: "10px", }}>
-        <StructureVisualizer cifText={cifText3D} />
+      <div style={{ width: "450px", height: "450px", margin: "10px" }}>
+        <StructureVisualizer cifText={cifText3D} labelMapping={labelMapping} />
       </div>
 
       <div style={{ width: "450px", height: "450px", margin: "10px" }}>
-        <CubeVisualizer cubeText={TESTCUBE} />
+        <CubeVisualizer
+          cubeText={TESTCUBE}
+          cubeRange={getCubeDataRange(TESTCUBE)}
+        />
       </div>
     </div>
   );
