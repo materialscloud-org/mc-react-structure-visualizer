@@ -24,11 +24,14 @@
 }
 
 .supercell-input {
-  width: 35px;
+  width: 40px;
   height: 25px;
   border-radius: 4px;
   border: 1px solid lightgray;
-  margin-right: 1px;
+  /* margin-right: 1px; */
+  margin: 1px;
+  padding: 0px 2px 0px 2px;
+  font-size: 14px;
 }
 
 .supercell-input::-webkit-inner-spin-button,
@@ -79,6 +82,7 @@
   /* margin: 1px; */
   padding: 8px;
   height: 25px;
+  font-size: 14px;
 }
 
 .camera-button:hover {
@@ -94,7 +98,7 @@
   margin-left: 4px;
 }
 
-.control-box-row .form-check {
-  margin: 0px;
+.control-box-input {
+  margin: 3px 3px 3px 4px;
   padding: 0px;
 }

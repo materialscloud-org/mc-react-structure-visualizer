@@ -60,6 +60,7 @@ const ControlBox = ({ viewerParams, onViewerParamChange, onViewerEvent }) => {
       <div className="control-box-row" style={{ display: "flex" }}>
         <label className="option-checkbox">
           <input
+            className="control-box-input"
             type="checkbox"
             checked={viewerParams.bonds}
             onChange={() => handleOptionChange("bonds")}
@@ -68,6 +69,7 @@ const ControlBox = ({ viewerParams, onViewerParamChange, onViewerEvent }) => {
         </label>
         <label className="option-checkbox">
           <input
+            className="control-box-input"
             type="checkbox"
             checked={viewerParams.packedCell}
             onChange={() => handleOptionChange("packedCell")}
@@ -76,6 +78,7 @@ const ControlBox = ({ viewerParams, onViewerParamChange, onViewerEvent }) => {
         </label>
         <label className="option-checkbox">
           <input
+            className="control-box-input"
             type="checkbox"
             checked={viewerParams.atomLabels}
             onChange={() => handleOptionChange("atomLabels")}
@@ -84,6 +87,7 @@ const ControlBox = ({ viewerParams, onViewerParamChange, onViewerEvent }) => {
         </label>
         <label className="option-checkbox">
           <input
+            className="control-box-input"
             type="checkbox"
             checked={viewerParams.spaceFilling}
             onChange={() => handleOptionChange("vdwRadius")}
