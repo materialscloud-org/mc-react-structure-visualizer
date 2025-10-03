@@ -1,5 +1,4 @@
 import React from "react";
-import { Form, Button } from "react-bootstrap";
 import "./index.css";
 
 class ControlBox extends React.Component {
@@ -22,10 +21,10 @@ class ControlBox extends React.Component {
       <div className="control-box">
         <div className="control-box-row">
           <div className="supercell-container">
-            <Form.Label>Supercell: </Form.Label>
+            <label>Supercell: </label>
             <div style={{ display: "flex" }}>
               {[0, 1, 2].map((index) => (
-                <Form.Control
+                <input
                   key={index}
                   className="supercell-input"
                   type="number"
@@ -41,56 +40,60 @@ class ControlBox extends React.Component {
           </div>
 
           <div className="camera-controls">
-            <Form.Label>Camera: </Form.Label>
-            <Button
+            <label>Camera: </label>
+            <button
               className="camera-button"
               onClick={() => this.handleCameraEvent("x")}
             >
               x
-            </Button>
-            <Button
+            </button>
+            <button
               className="camera-button"
               onClick={() => this.handleCameraEvent("y")}
             >
               y
-            </Button>
-            <Button
+            </button>
+            <button
               className="camera-button"
               onClick={() => this.handleCameraEvent("z")}
             >
               z
-            </Button>
+            </button>
           </div>
         </div>
         <div className="control-box-row" style={{ display: "flex" }}>
-          <Form.Check
-            className="option-checkbox"
-            type="checkbox"
-            checked={this.props.viewerParams.bonds}
-            onChange={() => this.handleOptionChange("bonds")}
-            label="Bonds"
-          />
-          <Form.Check
-            className="option-checkbox"
-            type="checkbox"
-            checked={this.props.viewerParams.packedCell}
-            onChange={() => this.handleOptionChange("packedCell")}
-            label="Packed cell"
-          />
-          <Form.Check
-            className="option-checkbox"
-            type="checkbox"
-            checked={this.props.viewerParams.atomLabels}
-            onChange={() => this.handleOptionChange("atomLabels")}
-            label="Atom labels"
-          />
-          <Form.Check
-            className="option-checkbox"
-            type="checkbox"
-            checked={this.props.viewerParams.spaceFilling}
-            onChange={() => this.handleOptionChange("vdwRadius")}
-            label="vdW radius"
-          />
+          <label className="option-checkbox">
+            <input
+              type="checkbox"
+              checked={this.props.viewerParams.bonds}
+              onChange={() => this.handleOptionChange("bonds")}
+            />
+            <span>Bonds</span>
+          </label>
+          <label className="option-checkbox">
+            <input
+              type="checkbox"
+              checked={this.props.viewerParams.packedCell}
+              onChange={() => this.handleOptionChange("packedCell")}
+            />
+            <span>Packed cell</span>
+          </label>
+          <label className="option-checkbox">
+            <input
+              type="checkbox"
+              checked={this.props.viewerParams.atomLabels}
+              onChange={() => this.handleOptionChange("atomLabels")}
+            />
+            <span>Atom labels</span>
+          </label>
+          <label className="option-checkbox">
+            <input
+              type="checkbox"
+              checked={this.props.viewerParams.spaceFilling}
+              onChange={() => this.handleOptionChange("vdwRadius")}
+            />
+            <span>vdW radius</span>
+          </label>
         </div>
       </div>
     );

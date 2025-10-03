@@ -4,7 +4,8 @@ import StructureVisualizer from "./StructureVisualizer";
 
 async function fetchCif3D() {
   // Fetch a cif file from the Materials Cloud AiiDA rest api
-  const aiidaRestEndpoint = "https://aiida.materialscloud.org/mc3d/api/v4";
+  const aiidaRestEndpoint =
+    "https://aiida.materialscloud.org/mc3d-pbe-v1/api/v4";
   let uuid = "85260507-9cb4-4849-a10d-703f32697dd7";
 
   // potentially problematic cases w.r.t. bond lengths
