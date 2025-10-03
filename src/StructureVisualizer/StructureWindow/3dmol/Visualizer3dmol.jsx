@@ -1,9 +1,11 @@
-import React from "react";
-
+import React, {
+  useRef,
+  useEffect,
+  useImperativeHandle,
+  forwardRef,
+} from "react";
 import * as $3Dmol from "3dmol";
-
 import { covalentRadii } from "./bondLengths";
-
 import "./Visualizer3dmol.css";
 
 function mod(n, m) {
@@ -23,45 +25,27 @@ function setCustomBondLengths() {
   });
 }
 
-class Visualizer3dmol extends React.Component {
-  constructor(props) {
-    super(props);
+const Visualizer3dmol = forwardRef(({ viewerParams, cifText }, ref) => {
+  const viewerRef = useRef(null);
+  const modelRef = useRef(null);
+  const divIdRef = useRef(
+    "gldiv-" + (Math.random() + 1).toString(36).substring(7),
+  );
 
+  // Initialize custom bond lengths once
+  useEffect(() => {
     setCustomBondLengths();
+  }, []);
 
-    this.viewer = null;
-    this.model = null;
+  const custom3dmolSetup = () => {
+    modelRef.current = viewerRef.current.addModel();
 
-    // Assign random id to prevent multiple 'gldiv' from clashing
-    this.divId = "gldiv-" + (Math.random() + 1).toString(36).substring(7);
-  }
-
-  componentDidMount() {
-    // set up the viewer instance
-    let config = { backgroundColor: "white", orthographic: true };
-    this.viewer = $3Dmol.createViewer(this.divId, config);
-
-    this.updateView();
-  }
-
-  componentDidUpdate(prevProps) {
-    if (
-      prevProps.viewerParams != this.props.viewerParams ||
-      prevProps.cifText != this.props.cifText
-    ) {
-      this.updateView();
-    }
-  }
-
-  custom3dmolSetup() {
-    this.model = this.viewer.addModel();
-
-    if (this.props.cifText) {
-      let loadedCif = $3Dmol.Parsers.CIF(this.props.cifText);
+    if (cifText) {
+      let loadedCif = $3Dmol.Parsers.CIF(cifText);
       let loadedAtoms = loadedCif[0];
       let cellData = loadedCif["modelData"][0]["cryst"];
 
-      this.model.setCrystData(
+      modelRef.current.setCrystData(
         cellData.a,
         cellData.b,
         cellData.c,
@@ -70,10 +54,8 @@ class Visualizer3dmol extends React.Component {
         cellData.gamma,
       );
 
-      let cellMatrix = this.model.modelData.cryst.matrix;
-
+      let cellMatrix = modelRef.current.modelData.cryst.matrix;
       let fracConversionMatrix = new $3Dmol.Matrix3().getInverse3(cellMatrix);
-
       let final_atoms = [];
 
       // in case of packed cell, make sure all the initially specified atoms
@@ -81,7 +63,7 @@ class Visualizer3dmol extends React.Component {
       let atoms = [];
       loadedAtoms.forEach((atom) => {
         let cart = new $3Dmol.Vector3(atom.x, atom.y, atom.z);
-        if (this.props.viewerParams.packedCell) {
+        if (viewerParams.packedCell) {
           let frac = cart.clone().applyMatrix3(fracConversionMatrix);
           let folded_frac = new $3Dmol.Vector3(
             mod(frac.x, 1),
@@ -105,7 +87,7 @@ class Visualizer3dmol extends React.Component {
       // considered "on edge" for packed cell option
       let edgeDelta = 0.03;
 
-      let sc = this.props.viewerParams.supercell;
+      let sc = viewerParams.supercell;
       for (let i = -1; i < sc[0] + 1; i++) {
         for (let j = -1; j < sc[1] + 1; j++) {
           for (let k = -1; k < sc[2] + 1; k++) {
@@ -121,7 +103,7 @@ class Visualizer3dmol extends React.Component {
               // we are outside the specified supercell.
               // in case of packed cell, add all atoms from the 
               // neighboring cells that are exactly on edges
-              if (this.props.viewerParams.packedCell) {
+              if (viewerParams.packedCell) {
                 atoms.forEach((atom) => {
                   let cart = new $3Dmol.Vector3(atom.x, atom.y, atom.z);
                   cart.add(offset);
@@ -159,37 +141,32 @@ class Visualizer3dmol extends React.Component {
         }
       }
 
-      this.model.addAtoms(final_atoms);
+      modelRef.current.addAtoms(final_atoms);
     }
-  }
+  };
 
-  updateView() {
-    this.viewer.removeAllModels();
-    // this.model = this.viewer.addModel(this.props.cifText, "cif");
-    this.custom3dmolSetup();
+  const updateView = () => {
+    viewerRef.current.removeAllModels();
+    custom3dmolSetup();
 
     let style = {
       sphere: { scale: 0.3, colorscheme: "Jmol" },
     };
-    if (this.props.viewerParams.vdwRadius) {
+    if (viewerParams.vdwRadius) {
       style.sphere.scale = 1.0;
     }
-    if (this.props.viewerParams.bonds) {
+    if (viewerParams.bonds) {
       style.stick = { radius: 0.15, colorscheme: "Jmol" };
     }
 
-    this.viewer.setStyle(style);
+    viewerRef.current.setStyle(style);
+    viewerRef.current.addUnitCell(modelRef.current);
+    modelRef.current.assignBonds();
 
-    this.viewer.addUnitCell(this.model);
-    //let sc = this.props.viewerParams.supercell;
-    //this.viewer.replicateUnitCell(sc[0], sc[1], sc[2], this.model);
-
-    this.model.assignBonds();
-
-    this.viewer.removeAllLabels();
-    if (this.props.viewerParams.atomLabels) {
-      this.model.atoms.forEach((atom) => {
-        this.viewer.addLabel(
+    viewerRef.current.removeAllLabels();
+    if (viewerParams.atomLabels) {
+      modelRef.current.atoms.forEach((atom) => {
+        viewerRef.current.addLabel(
           atom.elem,
           {
             position: { x: atom.x, y: atom.y, z: atom.z },
@@ -206,35 +183,53 @@ class Visualizer3dmol extends React.Component {
       });
     }
 
-    this.viewer.zoomTo();
-    this.viewer.zoom(1.4);
-    this.viewer.render();
-  }
+    viewerRef.current.zoomTo();
+    viewerRef.current.zoom(1.4);
+    viewerRef.current.render();
+  };
 
-  handleEvent(type, value) {
+  const handleEvent = (type, value) => {
     if (type == "camera") {
-      // console.log(this.viewer.getView());
       if (value == "x") {
-        this.viewer.setView([0.0, 0.0, 0.0, 0.0, -0.5, -0.5, -0.5, 0.5]);
+        viewerRef.current.setView([0.0, 0.0, 0.0, 0.0, -0.5, -0.5, -0.5, 0.5]);
       }
       if (value == "y") {
-        this.viewer.setView([0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5, 0.5]);
+        viewerRef.current.setView([0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5, 0.5]);
       }
       if (value == "z") {
-        this.viewer.setView([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]);
+        viewerRef.current.setView([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]);
       }
-      this.viewer.zoomTo();
-      this.viewer.zoom(1.4);
+      viewerRef.current.zoomTo();
+      viewerRef.current.zoom(1.4);
     }
-  }
+  };
 
-  render() {
-    return (
-      <div id={this.divId} className="gldiv">
-        No data!
-      </div>
-    );
-  }
-}
+  // Expose handleEvent method to parent via ref
+  useImperativeHandle(ref, () => ({
+    handleEvent,
+  }));
+
+  // Initialize viewer on mount
+  useEffect(() => {
+    let config = { backgroundColor: "white", orthographic: true };
+    viewerRef.current = $3Dmol.createViewer(divIdRef.current, config);
+    updateView();
+  }, []);
+
+  // Update view when props change
+  useEffect(() => {
+    if (viewerRef.current) {
+      updateView();
+    }
+  }, [viewerParams, cifText]);
+
+  return (
+    <div id={divIdRef.current} className="gldiv">
+      No data!
+    </div>
+  );
+});
+
+Visualizer3dmol.displayName = "Visualizer3dmol";
 
 export default Visualizer3dmol;
