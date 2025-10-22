@@ -4,7 +4,10 @@ import React, {
   useImperativeHandle,
   forwardRef,
 } from "react";
-import * as $3Dmol from "3dmol";
+
+import "3dmol/build/3Dmol-min.js";
+const $3Dmol = window.$3Dmol;
+
 import { covalentRadii } from "./bondLengths";
 import "./Visualizer3dmol.css";
 
