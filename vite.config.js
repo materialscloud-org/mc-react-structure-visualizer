@@ -14,7 +14,11 @@ export default defineConfig({
       formats: ["es"],
     },
     rollupOptions: {
-      external: [...Object.keys(packageJson.peerDependencies)],
+      external: [
+        ...Object.keys(packageJson.peerDependencies),
+        "react/jsx-runtime",
+        "react/jsx-dev-runtime",
+      ],
     },
   },
 });
