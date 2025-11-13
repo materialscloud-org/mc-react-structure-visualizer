@@ -42,11 +42,23 @@ async function fetchCif2D() {
   return jsonAiiDACif.data.download.data;
 }
 
+async function fetchCube() {
+  const response = await fetch("./testcube.cube");
+  const text = await response.text();
+  return text;
+}
+
 function App() {
   const [cifText3D, setCifText3D] = useState(null);
   const [cifText2D, setCifText2D] = useState(null);
 
+  const [cubeText, setCubeText] = useState(null);
+
   useEffect(() => {
+    fetchCube().then((cT) => {
+      setCubeText(cT);
+    });
+
     fetchCif3D().then((cifText) => {
       setCifText3D(cifText);
     });
@@ -58,9 +70,9 @@ function App() {
   return (
     <div className="App">
       <div style={{ width: "450px", height: "450px", margin: "10px" }}>
-        <StructureVisualizer cifText={cifText3D} />
+        <StructureVisualizer cifText={""} cubeText={cubeText} />
       </div>
-      <StructureVisualizer cifText={cifText2D} initSupercell={[3, 3, 1]} />
+      {/* <StructureVisualizer cifText={cifText2D} initSupercell={[3, 3, 1]} /> */}
     </div>
   );
 }

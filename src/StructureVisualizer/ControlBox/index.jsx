@@ -1,6 +1,11 @@
 import "./index.css";
 
-const ControlBox = ({ viewerParams, onViewerParamChange, onViewerEvent }) => {
+const ControlBox = ({
+  viewerParams,
+  onViewerParamChange,
+  onViewerEvent,
+  hideSupercellButtons,
+}) => {
   const handleSupercellChange = (index, value) => {
     let newSupercell = viewerParams.supercell;
     newSupercell[index] = parseInt(value);
@@ -18,22 +23,25 @@ const ControlBox = ({ viewerParams, onViewerParamChange, onViewerEvent }) => {
   return (
     <div className="control-box">
       <div className="control-box-row">
-        <div className="supercell-container">
-          <label>Supercell: </label>
-          <div style={{ display: "flex" }}>
-            {[0, 1, 2].map((index) => (
-              <input
-                key={index}
-                className="supercell-input"
-                type="number"
-                min="1"
-                max="99"
-                value={viewerParams.supercell[index]}
-                onChange={(e) => handleSupercellChange(index, e.target.value)}
-              />
-            ))}
+        {/* Hide supercellflag. */}
+        {!hideSupercellButtons && (
+          <div className="supercell-container">
+            <label>Supercell: </label>
+            <div style={{ display: "flex" }}>
+              {[0, 1, 2].map((index) => (
+                <input
+                  key={index}
+                  className="supercell-input"
+                  type="number"
+                  min="1"
+                  max="99"
+                  value={viewerParams.supercell[index]}
+                  onChange={(e) => handleSupercellChange(index, e.target.value)}
+                />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="camera-controls">
           <label>Camera: </label>

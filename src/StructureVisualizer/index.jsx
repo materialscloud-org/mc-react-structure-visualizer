@@ -42,12 +42,19 @@ const StructureVisualizer = (props) => {
     visualizerRef.current.handleEvent(param, value);
   };
 
+  // it doesnt make sense to render supercells for cubeData.
+  let hideSuperCellButtons = false;
+  if (props.cubeText) {
+    hideSuperCellButtons = true;
+  }
+
   return (
     <div ref={wrapperRef} className="structure-visualizer">
       <StructureWindow
         visualizerRef={visualizerRef}
         viewerParams={viewerParams}
         cifText={props.cifText}
+        cubeText={props.cubeText}
         mouseEnabled={mouseEnabled}
         setMouseEnabledState={setMouseEnabledState}
       />
@@ -55,6 +62,7 @@ const StructureVisualizer = (props) => {
         viewerParams={viewerParams}
         onViewerParamChange={handleViewerParamChange}
         onViewerEvent={handleViewerEvent}
+        hideSupercellButtons
       />
     </div>
   );
