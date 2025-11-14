@@ -20,8 +20,8 @@ const ControlBox = ({ viewerParams, onViewerParamChange, onViewerEvent }) => {
     const neg = -value;
 
     const newSurfaces = [
-      { ...viewerParams.surfaces[0], isoval: pos },
-      { ...viewerParams.surfaces[1], isoval: neg },
+      { ...viewerParams.surfaces[0], isoval: pos + 1e-6 },
+      { ...viewerParams.surfaces[1], isoval: neg - 1e-6 },
     ];
 
     onViewerParamChange("surfaces", newSurfaces);
@@ -29,28 +29,27 @@ const ControlBox = ({ viewerParams, onViewerParamChange, onViewerEvent }) => {
 
   return (
     <div className="control-box">
-      <div className="control-box-row"></div>
-      {/* Supercell controls */}
-      {!viewerParams.hideSupercellButtons && (
-        <div className="supercell-container">
-          <label>Supercell: </label>
-          <div style={{ display: "flex" }}>
-            {[0, 1, 2].map((index) => (
-              <input
-                key={index}
-                className="supercell-input"
-                type="number"
-                min="1"
-                max="99"
-                value={viewerParams.supercell[index]}
-                onChange={(e) => handleSupercellChange(index, e.target.value)}
-              />
-            ))}
-          </div>
-        </div>
-      )}
-
       <div className="control-box-row">
+        {/* Supercell controls */}
+        {viewerParams.showSupercellButtons && (
+          <div className="supercell-container">
+            <label>Supercell: </label>
+            <div style={{ display: "flex" }}>
+              {[0, 1, 2].map((index) => (
+                <input
+                  key={index}
+                  className="supercell-input"
+                  type="number"
+                  min="1"
+                  max="99"
+                  value={viewerParams.supercell[index]}
+                  onChange={(e) => handleSupercellChange(index, e.target.value)}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Surfaces controls */}
         {viewerParams.surfaces?.length === 2 && (
           <div className="surface-control">
@@ -58,8 +57,8 @@ const ControlBox = ({ viewerParams, onViewerParamChange, onViewerEvent }) => {
             <input
               type="number"
               step="0.1"
-              min="0.0001"
-              value={Math.abs(viewerParams.surfaces[0].isoval)}
+              min="0.0"
+              value={Math.abs(viewerParams.surfaces[0].isoval).toFixed(2)}
               onChange={(e) => handleIsoValueChange(parseFloat(e.target.value))}
               style={{ width: "60px", marginRight: "8px" }}
             />
