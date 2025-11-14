@@ -284,16 +284,8 @@ const Visualizer3dmol = forwardRef(
     }));
 
     function zoomIn() {
-      // we only zoom once the atoms have been loaded.
-      const atomsExist =
-        Array.isArray(modelRef.current.atoms) &&
-        modelRef.current.atoms.length > 0;
-
-      // we only zoom once the atoms have been loaded.
-      if (atomsExist) {
-        viewerRef.current.zoomTo();
-        viewerRef.current.zoom(1.4);
-      }
+      viewerRef.current.zoomTo();
+      viewerRef.current.zoom(1.4);
       viewerRef.current.render();
     }
 
@@ -302,7 +294,7 @@ const Visualizer3dmol = forwardRef(
       let config = { backgroundColor: "white", orthographic: true };
       viewerRef.current = $3Dmol.createViewer(divIdRef.current, config);
       updateView();
-      zoomIn();
+      zoomIn(); //
     }, []);
 
     // Update view when props change
@@ -313,13 +305,13 @@ const Visualizer3dmol = forwardRef(
       }
     }, [viewerParams, cifText, cubeText]);
 
-    // apply the zoom reset only on large data load or supercell change.
+    // apply the zoom reset only on supercell change.
     useEffect(() => {
       if (viewerRef.current) {
         updateView();
         zoomIn();
       }
-    }, [viewerParams.supercell, cifText, cubeText]);
+    }, [viewerParams.supercell]);
 
     return (
       <div id={divIdRef.current} className="gldiv">
