@@ -43,7 +43,7 @@ async function fetchCif2D() {
 }
 
 async function fetchCube() {
-  const response = await fetch("./testcube.cube");
+  const response = await fetch("./largetestcube.cube");
   const text = await response.text();
   return text;
 }
@@ -72,7 +72,11 @@ function App() {
       <div style={{ width: "450px", height: "450px", margin: "10px" }}>
         <StructureVisualizer cifText={""} cubeText={cubeText} />
       </div>
-      {/* <StructureVisualizer cifText={cifText2D} initSupercell={[3, 3, 1]} /> */}
+
+      <div style={{ width: "450px", height: "450px", margin: "10px" }}>
+        <StructureVisualizer cifText={cifText3D} />
+      </div>
+      <StructureVisualizer cifText={cifText2D} initSupercell={[3, 3, 1]} />
     </div>
   );
 }

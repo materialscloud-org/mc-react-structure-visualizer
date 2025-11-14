@@ -11,30 +11,11 @@ const $3Dmol = window.$3Dmol;
 import { covalentRadii } from "./bondLengths";
 import "./Visualizer3dmol.css";
 
+import { parseCube } from "./cubeParser";
+import { cam } from "./utils";
+
 function mod(n, m) {
   return ((n % m) + m) % m;
-}
-
-function latticeMatrixToCellParams(m) {
-  // Extract lattice vectors (columns)
-  const aVec = [m[0], m[3], m[6]];
-  const bVec = [m[1], m[4], m[7]];
-  const cVec = [m[2], m[5], m[8]];
-
-  const vecLength = (v) => Math.sqrt(v[0] ** 2 + v[1] ** 2 + v[2] ** 2);
-  const dot = (v1, v2) => v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2];
-  const angle = (v1, v2) =>
-    (Math.acos(dot(v1, v2) / (vecLength(v1) * vecLength(v2))) * 180) / Math.PI;
-
-  const a = vecLength(aVec);
-  const b = vecLength(bVec);
-  const c = vecLength(cVec);
-
-  const alpha = angle(bVec, cVec); // opposite a
-  const beta = angle(aVec, cVec); // opposite b
-  const gamma = angle(aVec, bVec); // opposite c
-
-  return { a, b, c, alpha, beta, gamma };
 }
 
 function setCustomBondLengths() {
@@ -50,8 +31,78 @@ function setCustomBondLengths() {
   });
 }
 
+/**
+Utility that builds a supercell from the atoms, matrix, fracConversion and some other params.
+ */
+function buildSupercell(
+  atoms,
+  cellMatrix,
+  supercell = [1, 1, 1],
+  packedCell = false,
+  edgeDelta = 0.03,
+) {
+  const finalAtoms = [];
+
+  const fracConversionMatrix = new $3Dmol.Matrix3().getInverse3(cellMatrix);
+
+  for (let i = -1; i < supercell[0] + 1; i++) {
+    for (let j = -1; j < supercell[1] + 1; j++) {
+      for (let k = -1; k < supercell[2] + 1; k++) {
+        const offset = new $3Dmol.Vector3(i, j, k).applyMatrix3(cellMatrix);
+
+        const isEdge =
+          i === -1 ||
+          i === supercell[0] ||
+          j === -1 ||
+          j === supercell[1] ||
+          k === -1 ||
+          k === supercell[2];
+
+        if (isEdge) {
+          if (!packedCell) continue;
+
+          // Edge atoms: include those that overlap due to fractional wrapping
+          atoms.forEach((atom) => {
+            const cart = new $3Dmol.Vector3(atom.x, atom.y, atom.z).add(offset);
+            const frac = cart.clone().applyMatrix3(fracConversionMatrix);
+
+            if (
+              frac.x > -edgeDelta &&
+              frac.x < supercell[0] + edgeDelta &&
+              frac.y > -edgeDelta &&
+              frac.y < supercell[1] + edgeDelta &&
+              frac.z > -edgeDelta &&
+              frac.z < supercell[2] + edgeDelta
+            ) {
+              finalAtoms.push({
+                elem: atom.elem,
+                x: cart.x,
+                y: cart.y,
+                z: cart.z,
+              });
+            }
+          });
+        } else {
+          // Normal cell replication
+          atoms.forEach((atom) => {
+            finalAtoms.push({
+              elem: atom.elem,
+              x: atom.x + offset.x,
+              y: atom.y + offset.y,
+              z: atom.z + offset.z,
+            });
+          });
+        }
+      }
+    }
+  }
+
+  return finalAtoms;
+}
+
 const Visualizer3dmol = forwardRef(
   ({ viewerParams, cifText, cubeText }, ref) => {
+    const initializedRef = useRef(false);
     const viewerRef = useRef(null);
     const modelRef = useRef(null);
     const divIdRef = useRef(
@@ -63,11 +114,26 @@ const Visualizer3dmol = forwardRef(
       setCustomBondLengths();
     }, []);
 
+    const loadedCifRef = useRef(null);
+    const loadedCubeRef = useRef(null);
+    const volDataRef = useRef(null);
+    const cubeParamsRef = useRef(null);
+
     const custom3dmolSetup = () => {
       modelRef.current = viewerRef.current.addModel();
 
       if (cifText) {
-        let loadedCif = $3Dmol.Parsers.CIF(cifText);
+        // Check if we already parsed it
+        let loadedCif;
+        if (loadedCifRef.current) {
+          console.log("Using cached CIF data");
+          loadedCif = loadedCifRef.current;
+        } else {
+          console.log("Parsing CIF text");
+          loadedCif = $3Dmol.Parsers.CIF(cifText);
+          loadedCifRef.current = loadedCif; // cache it
+        }
+
         let loadedAtoms = loadedCif[0];
         let cellData = loadedCif["modelData"][0]["cryst"];
 
@@ -81,143 +147,84 @@ const Visualizer3dmol = forwardRef(
         );
 
         let cellMatrix = modelRef.current.modelData.cryst.matrix;
-        let fracConversionMatrix = new $3Dmol.Matrix3().getInverse3(cellMatrix);
-        let final_atoms = [];
 
-        // in case of packed cell, make sure all the initially specified atoms
-        // are folded back to the unit cell
-        let atoms = [];
-        loadedAtoms.forEach((atom) => {
-          let cart = new $3Dmol.Vector3(atom.x, atom.y, atom.z);
-          if (viewerParams.packedCell) {
-            let frac = cart.clone().applyMatrix3(fracConversionMatrix);
-            let folded_frac = new $3Dmol.Vector3(
-              mod(frac.x, 1),
-              mod(frac.y, 1),
-              mod(frac.z, 1),
-            );
-            // convert back to cartesian
-            cart = folded_frac.applyMatrix3(cellMatrix);
-          }
-          atoms.push({
-            elem: atom.elem,
-            x: cart.x,
-            y: cart.y,
-            z: cart.z,
-          });
-        });
-
-        // Build the supercell
-
-        // distance in fractional coordinates to the edge to be
-        // considered "on edge" for packed cell option
-        let edgeDelta = 0.03;
-
-        let sc = viewerParams.supercell;
-        for (let i = -1; i < sc[0] + 1; i++) {
-          for (let j = -1; j < sc[1] + 1; j++) {
-            for (let k = -1; k < sc[2] + 1; k++) {
-              let offset = new $3Dmol.Vector3(i, j, k);
-              offset.applyMatrix3(cellMatrix);
-
-              // prettier-ignore
-              if (
-              i == -1 || i == sc[0] ||
-              j == -1 || j == sc[1] ||
-              k == -1 || k == sc[2]
-            ) {
-              // we are outside the specified supercell.
-              // in case of packed cell, add all atoms from the 
-              // neighboring cells that are exactly on edges
-              if (viewerParams.packedCell) {
-                atoms.forEach((atom) => {
-                  let cart = new $3Dmol.Vector3(atom.x, atom.y, atom.z);
-                  cart.add(offset);
-                  let frac = cart.clone().applyMatrix3(fracConversionMatrix);
-  
-                  // prettier-ignore
-                  if (
-                    frac.x > -edgeDelta && frac.x < sc[0] + edgeDelta &&
-                    frac.y > -edgeDelta && frac.y < sc[1] + edgeDelta &&
-                    frac.z > -edgeDelta && frac.z < sc[2] + edgeDelta
-                  ) {
-                    final_atoms.push({
-                      elem: atom.elem,
-                      x: cart.x,
-                      y: cart.y,
-                      z: cart.z,
-                    });
-                  }
-                });
-              } else {
-                // in "non-packed" case, skip these edge cells
-                continue
-              }
-            } else {
-              atoms.forEach((atom) => {
-                final_atoms.push({
-                  elem: atom.elem,
-                  x: atom.x + offset.x,
-                  y: atom.y + offset.y,
-                  z: atom.z + offset.z,
-                });
-              });
-            }
-            }
-          }
-        }
+        const final_atoms = buildSupercell(
+          loadedAtoms,
+          cellMatrix,
+          viewerParams.supercell,
+          viewerParams.packedCell,
+        );
 
         modelRef.current.addAtoms(final_atoms);
       }
 
       if (cubeText) {
-        let loadedCube = $3Dmol.Parsers.CUBE(cubeText);
+        let params;
+        if (cubeParamsRef.current) {
+          params = cubeParamsRef.current;
+        } else {
+          console.log("Parsing cube parameters");
+          params = parseCube(cubeText);
+          cubeParamsRef.current = params; // cache it
+        }
+
+        let vol;
+        if (volDataRef.current) {
+          vol = volDataRef.current;
+        } else {
+          console.log("Creating new volumetric data");
+          vol = new $3Dmol.VolumeData(params.shiftedCif, "cube");
+          volDataRef.current = vol; // cache it
+        }
+
+        let loadedCube;
+        if (loadedCubeRef.current) {
+          loadedCube = loadedCubeRef.current;
+        } else {
+          console.log("Parsing cube atoms");
+          loadedCube = $3Dmol.Parsers.CUBE(params.shiftedCif);
+          loadedCubeRef.current = loadedCube; // cache it
+        }
+
         let loadedAtoms = loadedCube[0];
-        let cellData = loadedCube["modelData"][0]["cryst"];
-
-        console.log("cD", cellData);
-
-        const vol = new $3Dmol.VolumeData(cubeText, "cube");
-
-        // construct the unitcell, since 3dmol doesnt store it...
-
-        const cell = latticeMatrixToCellParams(cellData.matrix.elements);
-
-        console.log(cell);
 
         modelRef.current.setCrystData(
-          cell.a * 21,
-          cell.b * 22,
-          cell.c * 23,
-          cell.alpha,
-          cell.beta,
-          cell.gamma,
+          params.a,
+          params.b,
+          params.c,
+          params.alpha,
+          params.beta,
+          params.gamma,
         );
 
-        console.log("volData", vol);
-        viewerRef.current.addIsosurface(vol, {
-          isoval: 0.2,
-          color: "red",
-          opacity: 0.2,
-          smooth: true,
-        });
-        viewerRef.current.addIsosurface(vol, {
-          isoval: -0.2,
-          color: "blue",
-          opacity: 0.3,
-          smooth: false,
-        });
+        // Render isosurfaces based on viewerParams.surfaces
+        if (viewerParams.surfaces?.length) {
+          viewerParams.surfaces.forEach((s) => {
+            viewerRef.current.addIsosurface(vol, {
+              isoval: s.isoval,
+              color: s.color,
+              opacity: s.opacity ?? 0.4,
+              smooth: s.smooth ?? true,
+            });
+          });
+        }
 
-        modelRef.current.addAtoms(loadedAtoms);
+        const cellMatrix = modelRef.current.modelData.cryst.matrix;
+        const final_atoms = buildSupercell(
+          loadedAtoms,
+          cellMatrix,
+          viewerParams.supercell,
+          viewerParams.packedCell,
+        );
 
-        // 4. Adjust view
-        viewerRef.current.zoomTo();
-        viewerRef.current.render();
+        modelRef.current.addAtoms(final_atoms);
       }
     };
 
     const updateView = () => {
       viewerRef.current.removeAllModels();
+      viewerRef.current.removeAllShapes();
+
       custom3dmolSetup();
 
       let style = {
@@ -253,24 +260,18 @@ const Visualizer3dmol = forwardRef(
           );
         });
       }
-
-      viewerRef.current.zoomTo();
-      viewerRef.current.zoom(1.4);
-      viewerRef.current.render();
     };
 
     const handleEvent = (type, value) => {
       if (type == "camera") {
         if (value == "x") {
-          viewerRef.current.setView([
-            0.0, 0.0, 0.0, 0.0, -0.5, -0.5, -0.5, 0.5,
-          ]);
+          viewerRef.current.setView(cam.x);
         }
         if (value == "y") {
-          viewerRef.current.setView([0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5, 0.5]);
+          viewerRef.current.setView(cam.y);
         }
         if (value == "z") {
-          viewerRef.current.setView([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]);
+          viewerRef.current.setView(cam.z);
         }
         viewerRef.current.zoomTo();
         viewerRef.current.zoom(1.4);
@@ -282,19 +283,43 @@ const Visualizer3dmol = forwardRef(
       handleEvent,
     }));
 
+    function zoomIn() {
+      // we only zoom once the atoms have been loaded.
+      const atomsExist =
+        Array.isArray(modelRef.current.atoms) &&
+        modelRef.current.atoms.length > 0;
+
+      // we only zoom once the atoms have been loaded.
+      if (atomsExist) {
+        viewerRef.current.zoomTo();
+        viewerRef.current.zoom(1.4);
+      }
+      viewerRef.current.render();
+    }
+
     // Initialize viewer on mount
     useEffect(() => {
       let config = { backgroundColor: "white", orthographic: true };
       viewerRef.current = $3Dmol.createViewer(divIdRef.current, config);
       updateView();
+      zoomIn();
     }, []);
 
     // Update view when props change
     useEffect(() => {
       if (viewerRef.current) {
         updateView();
+        viewerRef.current.render();
       }
     }, [viewerParams, cifText, cubeText]);
+
+    // apply the zoom reset only on large data load or supercell change.
+    useEffect(() => {
+      if (viewerRef.current) {
+        updateView();
+        zoomIn();
+      }
+    }, [viewerParams.supercell, cifText, cubeText]);
 
     return (
       <div id={divIdRef.current} className="gldiv">

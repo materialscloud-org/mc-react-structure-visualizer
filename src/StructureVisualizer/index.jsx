@@ -11,6 +11,21 @@ const StructureVisualizer = (props) => {
     atomLabels: false,
     vdwRadius: false,
   });
+
+  useEffect(() => {
+    if (props.cubeText) {
+      setViewerParams((prev) => ({
+        ...prev,
+        supercell: [1, 1, 1],
+        hideSupercellButtons: true,
+        surfaces: [
+          { isoval: 0.1, color: "red", opacity: 0.85, smooth: true },
+          { isoval: -0.1, color: "blue", opacity: 0.85, smooth: true },
+        ],
+      }));
+    }
+  }, [props.cubeText]);
+
   const [mouseEnabled, setMouseEnabled] = useState(false);
   const visualizerRef = useRef(null);
   const wrapperRef = useRef(null);
@@ -42,12 +57,6 @@ const StructureVisualizer = (props) => {
     visualizerRef.current.handleEvent(param, value);
   };
 
-  // it doesnt make sense to render supercells for cubeData.
-  let hideSuperCellButtons = false;
-  if (props.cubeText) {
-    hideSuperCellButtons = true;
-  }
-
   return (
     <div ref={wrapperRef} className="structure-visualizer">
       <StructureWindow
@@ -62,7 +71,6 @@ const StructureVisualizer = (props) => {
         viewerParams={viewerParams}
         onViewerParamChange={handleViewerParamChange}
         onViewerEvent={handleViewerEvent}
-        hideSupercellButtons
       />
     </div>
   );
