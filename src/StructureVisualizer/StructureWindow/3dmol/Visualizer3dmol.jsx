@@ -42,12 +42,15 @@ const Visualizer3dmol = forwardRef(({ viewerParams, cifText }, ref) => {
 
   const custom3dmolSetup = () => {
     modelRef.current = viewerRef.current.addModel();
-
+    let loadedAtoms = null;
+    let cellData = null;
     if (cifText) {
       let loadedCif = $3Dmol.Parsers.CIF(cifText);
-      let loadedAtoms = loadedCif[0];
-      let cellData = loadedCif["modelData"][0]["cryst"];
+      loadedAtoms = loadedCif[0];
+      cellData = loadedCif["modelData"][0]["cryst"];
+    }
 
+    if (loadedAtoms) {
       modelRef.current.setCrystData(
         cellData.a,
         cellData.b,
@@ -149,7 +152,8 @@ const Visualizer3dmol = forwardRef(({ viewerParams, cifText }, ref) => {
   };
 
   const updateView = () => {
-    viewerRef.current.removeAllModels();
+    viewerRef.current.removeAllModels(); // REMOVE ATOMS AND BONDS
+    viewerRef.current.removeAllShapes(); // REMOVE CELL
     custom3dmolSetup();
 
     let style = {
