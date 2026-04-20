@@ -3,6 +3,7 @@ import React, {
   useEffect,
   useImperativeHandle,
   forwardRef,
+  useState,
 } from "react";
 
 import "3dmol/build/3Dmol-min.js";
@@ -29,6 +30,7 @@ function setCustomBondLengths() {
 }
 
 const Visualizer3dmol = forwardRef(({ viewerParams, cifText }, ref) => {
+  const [error, setError] = useState(null);
   const viewerRef = useRef(null);
   const modelRef = useRef(null);
   const divIdRef = useRef(
@@ -218,9 +220,17 @@ const Visualizer3dmol = forwardRef(({ viewerParams, cifText }, ref) => {
 
   // Initialize viewer on mount
   useEffect(() => {
-    let config = { backgroundColor: "white", orthographic: true };
-    viewerRef.current = $3Dmol.createViewer(divIdRef.current, config);
-    updateView();
+    try {
+      let config = { backgroundColor: "white", orthographic: true };
+      viewerRef.current = $3Dmol.createViewer(divIdRef.current, config);
+
+      updateView();
+    } catch (e) {
+      const errorMessage =
+        "Structure visualizer failed to initalize. Try enabling Hardware acceleration in your browser.";
+      console.error(errorMessage, e);
+      setError(errorMessage);
+    }
   }, []);
 
   // Update view when props change
@@ -229,6 +239,26 @@ const Visualizer3dmol = forwardRef(({ viewerParams, cifText }, ref) => {
       updateView();
     }
   }, [viewerParams, cifText]);
+
+  if (error) {
+    return (
+      <div
+        className="gldiv error"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100%",
+          textAlign: "center",
+          padding: "10px",
+          color: "red",
+          fontSize: "20px",
+        }}
+      >
+        {error}
+      </div>
+    );
+  }
 
   return (
     <div id={divIdRef.current} className="gldiv">
