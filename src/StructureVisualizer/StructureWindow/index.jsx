@@ -7,6 +7,7 @@ const StructureWindow = ({
   visualizerRef,
   viewerParams,
   cifText,
+  crystalStructure,
 }) => {
   let swClassName = "structure-window";
   if (!mouseEnabled) swClassName += " disable-mouse";
@@ -28,6 +29,7 @@ const StructureWindow = ({
             ref={visualizerRef}
             viewerParams={viewerParams}
             cifText={cifText}
+            crystalStructure={crystalStructure}
           />
         </div>
       </div>

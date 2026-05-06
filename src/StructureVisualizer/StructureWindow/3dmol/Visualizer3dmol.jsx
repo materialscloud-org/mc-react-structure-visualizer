@@ -11,6 +11,7 @@ const $3Dmol = window.$3Dmol;
 
 import { covalentRadii } from "./bondLengths";
 import "./Visualizer3dmol.css";
+import { latticeToCellParams, CrystalStructure, Site } from "matsci-parse";
 
 function mod(n, m) {
   return ((n % m) + m) % m;
@@ -29,81 +30,97 @@ function setCustomBondLengths() {
   });
 }
 
-const Visualizer3dmol = forwardRef(({ viewerParams, cifText }, ref) => {
-  const [error, setError] = useState(null);
-  const viewerRef = useRef(null);
-  const modelRef = useRef(null);
-  const divIdRef = useRef(
-    "gldiv-" + (Math.random() + 1).toString(36).substring(7),
-  );
+const Visualizer3dmol = forwardRef(
+  ({ viewerParams, cifText, crystalStructure }, ref) => {
+    const [error, setError] = useState(null);
+    const viewerRef = useRef(null);
+    const modelRef = useRef(null);
+    const divIdRef = useRef(
+      "gldiv-" + (Math.random() + 1).toString(36).substring(7),
+    );
 
-  // Initialize custom bond lengths once
-  useEffect(() => {
-    setCustomBondLengths();
-  }, []);
+    // Initialize custom bond lengths once
+    useEffect(() => {
+      setCustomBondLengths();
+    }, []);
 
-  const custom3dmolSetup = () => {
-    modelRef.current = viewerRef.current.addModel();
-    let loadedAtoms = null;
-    let cellData = null;
-    if (cifText) {
-      let loadedCif = $3Dmol.Parsers.CIF(cifText);
-      loadedAtoms = loadedCif[0];
-      cellData = loadedCif["modelData"][0]["cryst"];
-    }
+    const custom3dmolSetup = () => {
+      modelRef.current = viewerRef.current.addModel();
+      let loadedAtoms = null;
+      let cellData = null;
 
-    if (loadedAtoms) {
-      modelRef.current.setCrystData(
-        cellData.a,
-        cellData.b,
-        cellData.c,
-        cellData.alpha,
-        cellData.beta,
-        cellData.gamma,
-      );
+      if (crystalStructure) {
+        const { a, b, c, alpha, beta, gamma } = latticeToCellParams(
+          crystalStructure.lattice,
+        );
 
-      let cellMatrix = modelRef.current.modelData.cryst.matrix;
-      let fracConversionMatrix = new $3Dmol.Matrix3().getInverse3(cellMatrix);
-      let final_atoms = [];
+        cellData = { a, b, c, alpha, beta, gamma };
 
-      // in case of packed cell, make sure all the initially specified atoms
-      // are folded back to the unit cell
-      let atoms = [];
-      loadedAtoms.forEach((atom) => {
-        let cart = new $3Dmol.Vector3(atom.x, atom.y, atom.z);
-        if (viewerParams.packedCell) {
-          let frac = cart.clone().applyMatrix3(fracConversionMatrix);
-          let folded_frac = new $3Dmol.Vector3(
-            mod(frac.x, 1),
-            mod(frac.y, 1),
-            mod(frac.z, 1),
-          );
-          // convert back to cartesian
-          cart = folded_frac.applyMatrix3(cellMatrix);
-        }
-        atoms.push({
-          elem: atom.elem,
-          x: cart.x,
-          y: cart.y,
-          z: cart.z,
+        loadedAtoms = crystalStructure.sites.map((site) => ({
+          elem: crystalStructure.species[site.speciesIndex],
+          x: site.cart[0],
+          y: site.cart[1],
+          z: site.cart[2],
+        }));
+      } else if (cifText) {
+        const loadedCif = $3Dmol.Parsers.CIF(cifText);
+
+        loadedAtoms = loadedCif[0];
+        cellData = loadedCif["modelData"][0]["cryst"];
+      }
+
+      if (loadedAtoms) {
+        modelRef.current.setCrystData(
+          cellData.a,
+          cellData.b,
+          cellData.c,
+          cellData.alpha,
+          cellData.beta,
+          cellData.gamma,
+        );
+
+        let cellMatrix = modelRef.current.modelData.cryst.matrix;
+        let fracConversionMatrix = new $3Dmol.Matrix3().getInverse3(cellMatrix);
+        let final_atoms = [];
+
+        // in case of packed cell, make sure all the initially specified atoms
+        // are folded back to the unit cell
+        let atoms = [];
+        loadedAtoms.forEach((atom) => {
+          let cart = new $3Dmol.Vector3(atom.x, atom.y, atom.z);
+          if (viewerParams.packedCell) {
+            let frac = cart.clone().applyMatrix3(fracConversionMatrix);
+            let folded_frac = new $3Dmol.Vector3(
+              mod(frac.x, 1),
+              mod(frac.y, 1),
+              mod(frac.z, 1),
+            );
+            // convert back to cartesian
+            cart = folded_frac.applyMatrix3(cellMatrix);
+          }
+          atoms.push({
+            elem: atom.elem,
+            x: cart.x,
+            y: cart.y,
+            z: cart.z,
+          });
         });
-      });
 
-      // Build the supercell
+        // Build the supercell
 
-      // distance in fractional coordinates to the edge to be
-      // considered "on edge" for packed cell option
-      let edgeDelta = 0.03;
+        // distance in fractional coordinates to the edge to be
+        // considered "on edge" for packed cell option
+        let edgeDelta = 0.03;
 
-      let sc = viewerParams.supercell;
-      for (let i = -1; i < sc[0] + 1; i++) {
-        for (let j = -1; j < sc[1] + 1; j++) {
-          for (let k = -1; k < sc[2] + 1; k++) {
-            let offset = new $3Dmol.Vector3(i, j, k);
-            offset.applyMatrix3(cellMatrix);
+        let sc = viewerParams.supercell;
+        for (let i = -1; i < sc[0] + 1; i++) {
+          for (let j = -1; j < sc[1] + 1; j++) {
+            for (let k = -1; k < sc[2] + 1; k++) {
+              let offset = new $3Dmol.Vector3(i, j, k);
+              offset.applyMatrix3(cellMatrix);
 
-            // prettier-ignore
-            if (
+              // prettier-ignore
+              if (
               i == -1 || i == sc[0] ||
               j == -1 || j == sc[1] ||
               k == -1 || k == sc[2]
@@ -145,127 +162,130 @@ const Visualizer3dmol = forwardRef(({ viewerParams, cifText }, ref) => {
                 });
               });
             }
+            }
           }
         }
+
+        modelRef.current.addAtoms(final_atoms);
       }
-
-      modelRef.current.addAtoms(final_atoms);
-    }
-  };
-
-  const updateView = () => {
-    viewerRef.current.removeAllModels(); // REMOVE ATOMS AND BONDS
-    viewerRef.current.removeAllShapes(); // REMOVE CELL
-    custom3dmolSetup();
-
-    let style = {
-      sphere: { scale: 0.3, colorscheme: "Jmol" },
     };
-    if (viewerParams.vdwRadius) {
-      style.sphere.scale = 1.0;
-    }
-    if (viewerParams.bonds) {
-      style.stick = { radius: 0.15, colorscheme: "Jmol" };
-    }
 
-    viewerRef.current.setStyle(style);
-    viewerRef.current.addUnitCell(modelRef.current);
-    modelRef.current.assignBonds();
+    const updateView = () => {
+      viewerRef.current.removeAllModels(); // REMOVE ATOMS AND BONDS
+      viewerRef.current.removeAllShapes(); // REMOVE CELL
+      custom3dmolSetup();
 
-    viewerRef.current.removeAllLabels();
-    if (viewerParams.atomLabels) {
-      modelRef.current.atoms.forEach((atom) => {
-        viewerRef.current.addLabel(
-          atom.elem,
-          {
-            position: { x: atom.x, y: atom.y, z: atom.z },
-            fontColor: "black",
-            bold: true,
-            fontSize: 18,
-            showBackground: false,
-            backgroundOpacity: 1.0,
-            inFront: true,
-          },
-          null,
-          true,
-        );
-      });
-    }
-
-    viewerRef.current.zoomTo();
-    viewerRef.current.zoom(1.4);
-    viewerRef.current.render();
-  };
-
-  const handleEvent = (type, value) => {
-    if (type == "camera") {
-      if (value == "x") {
-        viewerRef.current.setView([0.0, 0.0, 0.0, 0.0, -0.5, -0.5, -0.5, 0.5]);
+      let style = {
+        sphere: { scale: 0.3, colorscheme: "Jmol" },
+      };
+      if (viewerParams.vdwRadius) {
+        style.sphere.scale = 1.0;
       }
-      if (value == "y") {
-        viewerRef.current.setView([0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5, 0.5]);
+      if (viewerParams.bonds) {
+        style.stick = { radius: 0.15, colorscheme: "Jmol" };
       }
-      if (value == "z") {
-        viewerRef.current.setView([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]);
+
+      viewerRef.current.setStyle(style);
+      viewerRef.current.addUnitCell(modelRef.current);
+      modelRef.current.assignBonds();
+
+      viewerRef.current.removeAllLabels();
+      if (viewerParams.atomLabels) {
+        modelRef.current.atoms.forEach((atom) => {
+          viewerRef.current.addLabel(
+            atom.elem,
+            {
+              position: { x: atom.x, y: atom.y, z: atom.z },
+              fontColor: "black",
+              bold: true,
+              fontSize: 18,
+              showBackground: false,
+              backgroundOpacity: 1.0,
+              inFront: true,
+            },
+            null,
+            true,
+          );
+        });
       }
+
       viewerRef.current.zoomTo();
       viewerRef.current.zoom(1.4);
+      viewerRef.current.render();
+    };
+
+    const handleEvent = (type, value) => {
+      if (type == "camera") {
+        if (value == "x") {
+          viewerRef.current.setView([
+            0.0, 0.0, 0.0, 0.0, -0.5, -0.5, -0.5, 0.5,
+          ]);
+        }
+        if (value == "y") {
+          viewerRef.current.setView([0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5, 0.5]);
+        }
+        if (value == "z") {
+          viewerRef.current.setView([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]);
+        }
+        viewerRef.current.zoomTo();
+        viewerRef.current.zoom(1.4);
+      }
+    };
+
+    // Expose handleEvent method to parent via ref
+    useImperativeHandle(ref, () => ({
+      handleEvent,
+    }));
+
+    // Initialize viewer on mount
+    useEffect(() => {
+      try {
+        let config = { backgroundColor: "white", orthographic: true };
+        viewerRef.current = $3Dmol.createViewer(divIdRef.current, config);
+
+        updateView();
+      } catch (e) {
+        const errorMessage =
+          "Structure visualizer failed to initalize. Try enabling Hardware acceleration in your browser.";
+        console.error(errorMessage, e);
+        setError(errorMessage);
+      }
+    }, []);
+
+    // Update view when props change
+    useEffect(() => {
+      if (viewerRef.current) {
+        updateView();
+      }
+    }, [viewerParams, cifText, crystalStructure]);
+
+    if (error) {
+      return (
+        <div
+          className="gldiv error"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "100%",
+            textAlign: "center",
+            padding: "10px",
+            color: "red",
+            fontSize: "20px",
+          }}
+        >
+          {error}
+        </div>
+      );
     }
-  };
 
-  // Expose handleEvent method to parent via ref
-  useImperativeHandle(ref, () => ({
-    handleEvent,
-  }));
-
-  // Initialize viewer on mount
-  useEffect(() => {
-    try {
-      let config = { backgroundColor: "white", orthographic: true };
-      viewerRef.current = $3Dmol.createViewer(divIdRef.current, config);
-
-      updateView();
-    } catch (e) {
-      const errorMessage =
-        "Structure visualizer failed to initalize. Try enabling Hardware acceleration in your browser.";
-      console.error(errorMessage, e);
-      setError(errorMessage);
-    }
-  }, []);
-
-  // Update view when props change
-  useEffect(() => {
-    if (viewerRef.current) {
-      updateView();
-    }
-  }, [viewerParams, cifText]);
-
-  if (error) {
     return (
-      <div
-        className="gldiv error"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "100%",
-          textAlign: "center",
-          padding: "10px",
-          color: "red",
-          fontSize: "20px",
-        }}
-      >
-        {error}
+      <div id={divIdRef.current} className="gldiv">
+        No data!
       </div>
     );
-  }
-
-  return (
-    <div id={divIdRef.current} className="gldiv">
-      No data!
-    </div>
-  );
-});
+  },
+);
 
 Visualizer3dmol.displayName = "Visualizer3dmol";
 

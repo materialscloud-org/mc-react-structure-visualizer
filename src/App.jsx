@@ -55,8 +55,30 @@ function App() {
     });
   });
 
+  const crystalStructure = {
+    lattice: [
+      [5, 1.5, 0],
+      [0, 5, 0],
+      [0, 0, 5],
+    ],
+    species: ["Li"],
+    sites: [
+      {
+        speciesIndex: 0,
+        cart: [1, 1.5, 2.5],
+        props: {},
+      },
+    ],
+  };
+
   return (
     <div className="App">
+      <div style={{ width: "450px", height: "450px", margin: "10px" }}>
+        <StructureVisualizer
+          crystalStructure={crystalStructure}
+          initSupercell={[1, 1, 1]}
+        />
+      </div>
       <div style={{ width: "450px", height: "450px", margin: "10px" }}>
         <StructureVisualizer cifText={cifText3D} initSupercell={[1, 1, 1]} />
       </div>

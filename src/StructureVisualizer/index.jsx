@@ -48,6 +48,7 @@ const StructureVisualizer = (props) => {
         visualizerRef={visualizerRef}
         viewerParams={viewerParams}
         cifText={props.cifText}
+        crystalStructure={props.crystalStructure}
         mouseEnabled={mouseEnabled}
         setMouseEnabledState={setMouseEnabledState}
       />
