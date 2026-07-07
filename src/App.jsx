@@ -48,9 +48,6 @@ function App() {
   const [structure3D, setStructure3D] = useState(null)
   const [structure2D, setStructure2D] = useState(null)
 
-  const [cifText3D, setCifText3D] = useState(null);
-  const [cifText2D, setCifText2D] = useState(null);
-
 useEffect(() => {
   async function loadStructures() {
     const cif3D = await fetchCif3D();
