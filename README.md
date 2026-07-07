@@ -19,8 +19,8 @@ Note: the library (i.e. npm package) only contains the code in `src/StructureVis
 For developing the library of components, start the demo page (in `src\`) by
 
 ```
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 
 ### Building and testing locally
@@ -28,14 +28,14 @@ npm run dev
 To build the library and test it locally in an external application (before publishing to npm), use
 
 ```
-npm run build
-npm pack
+pnpm run build
+pnpm pack
 ```
 
 which will create a `.tgz` file that can then be installed by the external application via
 
 ```
-npm install /path/to/package-x.y.z.tgz
+pnpm install /path/to/package-x.y.z.tgz
 ```
 
 ### Publishing a new version
