@@ -6,7 +6,7 @@ const StructureWindow = ({
   setMouseEnabledState,
   visualizerRef,
   viewerParams,
-  cifText,
+  structure,
 }) => {
   let swClassName = "structure-window";
   if (!mouseEnabled) swClassName += " disable-mouse";
@@ -27,7 +27,7 @@ const StructureWindow = ({
           <Visualizer3dmol
             ref={visualizerRef}
             viewerParams={viewerParams}
-            cifText={cifText}
+            structure={structure}
           />
         </div>
       </div>

@@ -16,7 +16,9 @@
   },
   "dependencies": {
     "3dmol": "^2.5.3",
-    "mathjs": "^12.4.3"
+    "mathjs": "^12.4.3",
+    "matsci-parse": "^0.8.4",
+    "mc-periodic-table": "^0.1.4"
   },
   "peerDependencies": {
     "react": ">=18",

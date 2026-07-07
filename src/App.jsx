@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 
 import StructureVisualizer from "./StructureVisualizer";
 
+import { fromCIF } from "matsci-parse";
+
 async function fetchCif3D() {
   // Fetch a cif file from the Materials Cloud AiiDA rest api
   const aiidaRestEndpoint =
@@ -43,24 +45,30 @@ async function fetchCif2D() {
 }
 
 function App() {
+  const [structure3D, setStructure3D] = useState(null)
+  const [structure2D, setStructure2D] = useState(null)
+
   const [cifText3D, setCifText3D] = useState(null);
   const [cifText2D, setCifText2D] = useState(null);
 
-  useEffect(() => {
-    fetchCif3D().then((cifText) => {
-      setCifText3D(cifText);
-    });
-    fetchCif2D().then((cifText) => {
-      setCifText2D(cifText);
-    });
-  });
+useEffect(() => {
+  async function loadStructures() {
+    const cif3D = await fetchCif3D();
+    setStructure3D(fromCIF(cif3D));
+
+    const cif2D = await fetchCif2D();
+    setStructure2D(fromCIF(cif2D));
+  }
+
+  loadStructures();
+}, []);
 
   return (
     <div className="App">
       <div style={{ width: "450px", height: "450px", margin: "10px" }}>
-        <StructureVisualizer cifText={cifText3D} initSupercell={[1, 1, 1]} />
+        <StructureVisualizer structure={structure3D} initSupercell={[1, 1, 1]} />
       </div>
-      {/* <StructureVisualizer cifText={cifText2D} initSupercell={[3, 3, 1]} /> */}
+      <StructureVisualizer structure={structure2D} initSupercell={[3, 3, 1]} />
     </div>
   );
 }
